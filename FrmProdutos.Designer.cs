@@ -28,34 +28,40 @@
         /// </summary>
         private void InitializeComponent()
         {
-            dataGridView1 = new DataGridView();
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
+            dataGridViewProdutos = new DataGridView();
+            ((System.ComponentModel.ISupportInitialize)dataGridViewProdutos).BeginInit();
             SuspendLayout();
             // 
-            // dataGridView1
+            // dataGridViewProdutos
             // 
-            dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Dock = DockStyle.Fill;
-            dataGridView1.Location = new Point(0, 0);
-            dataGridView1.Name = "dataGridView1";
-            dataGridView1.Size = new Size(633, 450);
-            dataGridView1.TabIndex = 0;
+            dataGridViewProdutos.AllowUserToOrderColumns = true;
+            dataGridViewProdutos.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridViewProdutos.Dock = DockStyle.Fill;
+            dataGridViewProdutos.Location = new Point(0, 0);
+            dataGridViewProdutos.Margin = new Padding(3, 4, 3, 4);
+            dataGridViewProdutos.Name = "dataGridViewProdutos";
+            dataGridViewProdutos.RowHeadersWidth = 51;
+            dataGridViewProdutos.Size = new Size(723, 600);
+            dataGridViewProdutos.TabIndex = 0;
+            dataGridViewProdutos.CellEndEdit += dataGridViewProdutos_CellEndEdit;
+            dataGridViewProdutos.CellValidating += dataGridViewProdutos_CellValidating;
             // 
             // FrmProdutos
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(633, 450);
-            Controls.Add(dataGridView1);
+            ClientSize = new Size(723, 600);
+            Controls.Add(dataGridViewProdutos);
+            Margin = new Padding(3, 4, 3, 4);
             Name = "FrmProdutos";
             Text = "FrmProdutos";
             Load += FrmProdutos_Load;
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dataGridViewProdutos).EndInit();
             ResumeLayout(false);
         }
 
         #endregion
 
-        private DataGridView dataGridView1;
+        private DataGridView dataGridViewProdutos;
     }
 }
