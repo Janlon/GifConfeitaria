@@ -38,24 +38,26 @@
             dg.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dg.Dock = DockStyle.Fill;
             dg.Location = new Point(0, 0);
+            dg.Margin = new Padding(5, 6, 5, 6);
             dg.Name = "dg";
             dg.RowHeadersWidth = 51;
-            dg.Size = new Size(803, 468);
-            dg.TabIndex = 0;
-            dg.CellEndEdit += dg_CellEndEdit;
+            dg.Size = new Size(470, 167);
+            dg.TabIndex = 1;
             // 
             // FrmPrecos
             // 
-            AutoScaleDimensions = new SizeF(13F, 32F);
+            AutoScaleDimensions = new SizeF(11F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(803, 468);
+            ClientSize = new Size(470, 167);
             Controls.Add(dg);
             Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            FormBorderStyle = FormBorderStyle.FixedToolWindow;
+            FormBorderStyle = FormBorderStyle.SizableToolWindow;
             Margin = new Padding(5);
+            MaximizeBox = false;
             MdiChildrenMinimizedAnchorBottom = false;
+            MinimizeBox = false;
             Name = "FrmPrecos";
-            Text = "FrmPrecos";
+            Text = "Lista de Preços";
             Load += FrmPrecos_Load;
             ((System.ComponentModel.ISupportInitialize)dg).EndInit();
             ResumeLayout(false);

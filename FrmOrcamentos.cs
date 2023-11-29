@@ -217,6 +217,25 @@ namespace GifConfeitaria
         private void FrmOrcamentos_Load(object sender, EventArgs e)
         {
             Listar();
+            CarregarComboBox();
+        }
+
+        private void CarregarComboBox()
+        {
+            try
+            {
+                using SqlConnection connection = new(connectionString);
+                using SqlCommand command = new("SELECT NomeDaColuna FROM SuaTabela", connection);
+                using SqlDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    comboBox1.Items.Add(reader["NomeDaColuna"].ToString());
+                }
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show(ex.Message);
+            }       
         }
     }
 }

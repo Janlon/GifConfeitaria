@@ -1,8 +1,6 @@
 ﻿using System.Data;
 using System.Data.SqlClient;
-using System.Data.SqlTypes;
 using System.Globalization;
-using System.Windows.Forms;
 
 namespace GifConfeitaria
 {
@@ -22,6 +20,9 @@ namespace GifConfeitaria
 
         private void ConfigurarGrade()
         {
+               WindowState = FormWindowState.Maximized; // Maximiza o formulário ao abrir
+            // Dock = DockStyle.Fill; // Preenche todo o espaço disponível
+
             // Definir o modo de exibição da grade
             dg.AutoGenerateColumns = false;
 
@@ -30,17 +31,20 @@ namespace GifConfeitaria
             colunaID.DataPropertyName = "ID"; // Nome da propriedade no seu objeto de dados
             colunaID.HeaderText = "ID";
             dg.Columns.Add(colunaID);
+            dg.Columns[0].Visible = false;
 
             DataGridViewTextBoxColumn colunaNome = new DataGridViewTextBoxColumn();
             colunaNome.DataPropertyName = "Nome"; // Nome da propriedade no seu objeto de dados
             colunaNome.HeaderText = "Nome";
             dg.Columns.Add(colunaNome);
+            dg.Columns[1].Width = 300;
 
             DataGridViewTextBoxColumn colunaData = new DataGridViewTextBoxColumn();
             colunaData.DataPropertyName = "DataNascimento"; // Nome da propriedade no seu objeto de dados
             colunaData.HeaderText = "Data de Nascimento";
             colunaData.DefaultCellStyle.Format = "dd/MM/yyyy"; // Formato da data
             dg.Columns.Add(colunaData);
+            dg.Columns[2].Width = 300;
 
             // Configurar o estilo escuro
             dg.BackgroundColor = Color.FromArgb(45, 45, 48);
@@ -168,7 +172,7 @@ namespace GifConfeitaria
             }
 
             var medida = dg.CurrentRow.Cells["Medida"].Value.ToString();
-            
+
             var valorQuantidade = dg.CurrentRow.Cells["Quantidade"].Value.ToString();
             int quantidade = 0;
             if (valorQuantidade != string.Empty)
@@ -183,12 +187,13 @@ namespace GifConfeitaria
                 preco = Convert.ToDouble(valorpreco);
             }
 
-            Gravar(id, nome, medida, quantidade,  preco);
+            Gravar(id, nome, medida, quantidade, preco);
         }
 
         private void FrmPrecos_Load(object sender, EventArgs e)
         {
-           // Listar();
+            // Listar();
         }
+
     }
 }

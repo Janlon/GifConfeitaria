@@ -47,14 +47,14 @@
             // 
             // FrmProdutos
             // 
-            AutoScaleDimensions = new SizeF(13F, 31F);
+            AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(803, 468);
             Controls.Add(dg);
             Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
             Margin = new Padding(5, 6, 5, 6);
             Name = "FrmProdutos";
-            Text = "FrmProdutos";
+            Text = "Meus Produtos";
             Load += FrmProdutos_Load;
             ((System.ComponentModel.ISupportInitialize)dg).EndInit();
             ResumeLayout(false);

@@ -1,11 +1,5 @@
-﻿using Microsoft.VisualBasic;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
+﻿using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
-using System.Globalization;
-using System.Windows.Forms;
 
 namespace GifConfeitaria
 {
@@ -18,26 +12,92 @@ namespace GifConfeitaria
         public FrmProdutos()
         {
             InitializeComponent();
+            ConfigurarGrade();
         }
+
+        private void ConfigurarGrade()
+        {
+            WindowState = FormWindowState.Maximized; // Maximiza o formulário ao abrir
+            // Dock = DockStyle.Fill; // Preenche todo o espaço disponível
+
+            // Definir o modo de exibição da grade
+            dg.AutoGenerateColumns = false;
+
+            // Adicionar colunas à grade
+            DataGridViewTextBoxColumn colunaID = new DataGridViewTextBoxColumn();
+            colunaID.DataPropertyName = "Id"; // Nome da propriedade no seu objeto de dados
+            colunaID.HeaderText = "Id";
+            dg.Columns.Add(colunaID);
+            dg.Columns[0].Width = 50;
+
+            DataGridViewTextBoxColumn colunaNome = new DataGridViewTextBoxColumn();
+            colunaNome.DataPropertyName = "Nome"; // Nome da propriedade no seu objeto de dados
+            colunaNome.HeaderText = "Nome";
+            dg.Columns.Add(colunaNome);
+            dg.Columns[1].Width = 650;
+
+            // Configurar o estilo escuro
+            dg.BackgroundColor = Color.FromArgb(45, 45, 48);
+            dg.DefaultCellStyle.BackColor = Color.FromArgb(28, 28, 28);
+            dg.DefaultCellStyle.ForeColor = Color.White;
+            dg.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(45, 45, 48);
+            dg.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+            dg.RowHeadersDefaultCellStyle.BackColor = Color.FromArgb(45, 45, 48);
+            dg.RowHeadersDefaultCellStyle.ForeColor = Color.White;
+        }
+
 
         private void Listar()
         {
             try
             {
-                string query = "SELECT [Id],[Nome] FROM [confeitaria].[dbo].[Produtos]";
-
-                dataAdapter = new SqlDataAdapter(query, connectionString);
-
-                SqlCommandBuilder commandBuilder = new(dataAdapter);
-
-                DataTable table = new()
+                using (SqlConnection connection = new(connectionString))
                 {
-                    Locale = CultureInfo.InvariantCulture
-                };
-                dataAdapter.Fill(table);
+                    string query = "SELECT [Id],[Nome] FROM [Geca].[dbo].[Produtos]";
+                    connection.Open();
+  
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        // Crie um adaptador de dados
+                        using (SqlDataAdapter adapter = new SqlDataAdapter(command))
+                        {
+                            // Crie um DataTable para armazenar os dados
+                            DataTable dataTable = new DataTable();
 
-                dg.DataSource = bindingSource1;
-                bindingSource1.DataSource = table;
+                            // Preencha o DataTable com os dados do banco de dados
+                            adapter.Fill(dataTable);
+
+                            // Atribua o DataTable ao DataSource do DataGridView
+                            //dg.DataSource = dataTable;
+
+                            foreach (DataRow row in dataTable.Rows)
+                            {
+                                // Adicione uma nova linha ao DataGridView
+                                int index = dg.Rows.Add();
+
+                                // Itere pelas colunas e popule as células do DataGridView
+                                for (int i = 0; i < dataTable.Columns.Count; i++)
+                                {
+                                    dg.Rows[index].Cells[i].Value = row[i];
+                                }
+                            }
+                        }
+                    }
+                }
+
+                //dataAdapter = new SqlDataAdapter(query, connectionString);
+
+                //SqlCommandBuilder commandBuilder = new(dataAdapter);
+
+                //DataTable table = new()
+                //{
+                //    Locale = CultureInfo.InvariantCulture
+                //};
+
+                //dataAdapter.Fill(table);
+
+                //dg.DataSource = bindingSource1;
+                //bindingSource1.DataSource = table;
 
             }
             catch (SqlException ex)
@@ -73,7 +133,7 @@ namespace GifConfeitaria
         {
             using (SqlConnection connection = new(connectionString))
             {
-                string query = "INSERT INTO PRODUTOS(Nome) VALUES (@Nome)";
+                string query = "INSERT INTO PRODUTOS (Nome) VALUES (@Nome)";
                 connection.Open();
                 SqlCommand cmd = new(query, connection);
                 cmd.Parameters.AddWithValue("@Nome", nome.Trim().ToUpper());
@@ -110,22 +170,30 @@ namespace GifConfeitaria
 
         private void dg_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
-            if (dg.CurrentRow == null) return;
-
-            var valorId = dg.CurrentRow.Cells["Id"].Value.ToString();
-            int id = 0;
-            if (valorId != string.Empty)
+            try
             {
-                id = Convert.ToInt32(valorId);
-            }
+                if (dg.CurrentRow == null) return;
 
-            var nome = dg.CurrentRow.Cells["Nome"].Value.ToString();
-            if (nome == string.Empty)
+                var valorId = dg.CurrentRow.Cells[0].Value;
+                int id = 0;
+                if (valorId != null)
+                {
+                    id = Convert.ToInt32(valorId);
+                }
+
+                var nome = dg.CurrentRow.Cells[1].Value;
+                if (nome == null)
+                {
+                    return;
+                }
+
+                Gravar(id, nome.ToString().Trim().ToUpper());
+            }
+            catch (Exception ex)
             {
-                return;
+                MessageBox.Show(ex.Message);
             }
-
-            Gravar(id, nome.Trim().ToUpper());
+           
         }
     }
 }

@@ -30,34 +30,38 @@ namespace GifConfeitaria
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmPai));
-            pictureBox1 = new PictureBox();
+            PainelPai = new Panel();
             btnOrcamentos = new Button();
             btnProdutos = new Button();
             btnPrecos = new Button();
+            pictureBox1 = new PictureBox();
+            PainelPai.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
             // 
-            // pictureBox1
+            // PainelPai
             // 
-            pictureBox1.Dock = DockStyle.Fill;
-            pictureBox1.Image = Properties.Resources.papel_de_parede;
-            pictureBox1.Location = new Point(0, 0);
-            pictureBox1.Margin = new Padding(3, 2, 3, 2);
-            pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(800, 450);
-            pictureBox1.TabIndex = 6;
-            pictureBox1.TabStop = false;
+            PainelPai.Controls.Add(btnOrcamentos);
+            PainelPai.Controls.Add(btnProdutos);
+            PainelPai.Controls.Add(btnPrecos);
+            PainelPai.Controls.Add(pictureBox1);
+            PainelPai.Dock = DockStyle.Fill;
+            PainelPai.Location = new Point(0, 0);
+            PainelPai.Name = "PainelPai";
+            PainelPai.Size = new Size(722, 414);
+            PainelPai.TabIndex = 11;
             // 
             // btnOrcamentos
             // 
             btnOrcamentos.BackColor = Color.PaleGreen;
             btnOrcamentos.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnOrcamentos.ForeColor = Color.FromArgb(192, 0, 192);
             btnOrcamentos.Image = Properties.Resources._2138186_baker_bakery_cupcake_dessert_food_icon;
             btnOrcamentos.ImageAlign = ContentAlignment.MiddleLeft;
-            btnOrcamentos.Location = new Point(506, 185);
+            btnOrcamentos.Location = new Point(470, 187);
             btnOrcamentos.Name = "btnOrcamentos";
             btnOrcamentos.Size = new Size(199, 80);
-            btnOrcamentos.TabIndex = 9;
+            btnOrcamentos.TabIndex = 13;
             btnOrcamentos.Text = "Meus &Gastos";
             btnOrcamentos.TextAlign = ContentAlignment.MiddleRight;
             btnOrcamentos.UseVisualStyleBackColor = false;
@@ -66,13 +70,14 @@ namespace GifConfeitaria
             // btnProdutos
             // 
             btnProdutos.BackColor = Color.BurlyWood;
-            btnProdutos.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnProdutos.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnProdutos.ForeColor = Color.Green;
             btnProdutos.Image = Properties.Resources._2138186_baker_bakery_cupcake_dessert_food_icon;
             btnProdutos.ImageAlign = ContentAlignment.MiddleLeft;
-            btnProdutos.Location = new Point(301, 185);
+            btnProdutos.Location = new Point(265, 187);
             btnProdutos.Name = "btnProdutos";
             btnProdutos.Size = new Size(199, 80);
-            btnProdutos.TabIndex = 8;
+            btnProdutos.TabIndex = 12;
             btnProdutos.Text = "&Meus Produtos";
             btnProdutos.TextAlign = ContentAlignment.MiddleRight;
             btnProdutos.UseVisualStyleBackColor = false;
@@ -81,29 +86,37 @@ namespace GifConfeitaria
             // btnPrecos
             // 
             btnPrecos.BackColor = Color.DeepPink;
-            btnPrecos.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnPrecos.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             btnPrecos.ForeColor = Color.White;
             btnPrecos.Image = Properties.Resources._2138186_baker_bakery_cupcake_dessert_food_icon;
             btnPrecos.ImageAlign = ContentAlignment.MiddleLeft;
-            btnPrecos.Location = new Point(95, 185);
+            btnPrecos.Location = new Point(59, 187);
             btnPrecos.Name = "btnPrecos";
             btnPrecos.Size = new Size(199, 80);
-            btnPrecos.TabIndex = 7;
+            btnPrecos.TabIndex = 11;
             btnPrecos.Text = "Lista de &Preços";
             btnPrecos.TextAlign = ContentAlignment.MiddleRight;
             btnPrecos.UseVisualStyleBackColor = false;
             btnPrecos.Click += btnPrecos_Click;
+            // 
+            // pictureBox1
+            // 
+            pictureBox1.Dock = DockStyle.Fill;
+            pictureBox1.Image = Properties.Resources.papel_de_parede;
+            pictureBox1.Location = new Point(0, 0);
+            pictureBox1.Margin = new Padding(3, 2, 3, 2);
+            pictureBox1.Name = "pictureBox1";
+            pictureBox1.Size = new Size(722, 414);
+            pictureBox1.TabIndex = 10;
+            pictureBox1.TabStop = false;
             // 
             // FrmPai
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.Control;
-            ClientSize = new Size(800, 450);
-            Controls.Add(btnOrcamentos);
-            Controls.Add(btnProdutos);
-            Controls.Add(btnPrecos);
-            Controls.Add(pictureBox1);
+            ClientSize = new Size(722, 414);
+            Controls.Add(PainelPai);
             FormBorderStyle = FormBorderStyle.FixedSingle;
             Icon = (Icon)resources.GetObject("$this.Icon");
             IsMdiContainer = true;
@@ -111,15 +124,17 @@ namespace GifConfeitaria
             Name = "FrmPai";
             StartPosition = FormStartPosition.CenterScreen;
             Text = ":: GIF CONFEITARIA ::";
+            PainelPai.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ResumeLayout(false);
         }
 
         #endregion
 
-        private PictureBox pictureBox1;
+        private Panel PainelPai;
         private Button btnOrcamentos;
         private Button btnProdutos;
         private Button btnPrecos;
+        private PictureBox pictureBox1;
     }
 }
