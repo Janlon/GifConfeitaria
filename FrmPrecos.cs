@@ -2,6 +2,7 @@
 using System.Data.SqlClient;
 using System.Data.SqlTypes;
 using System.Globalization;
+using System.Windows.Forms;
 
 namespace GifConfeitaria
 {
@@ -14,6 +15,51 @@ namespace GifConfeitaria
         public FrmPrecos()
         {
             InitializeComponent();
+
+            // Configurar o DataGridView
+            ConfigurarGrade();
+        }
+
+        private void ConfigurarGrade()
+        {
+            // Definir o modo de exibição da grade
+            dg.AutoGenerateColumns = false;
+
+            // Adicionar colunas à grade
+            DataGridViewTextBoxColumn colunaID = new DataGridViewTextBoxColumn();
+            colunaID.DataPropertyName = "ID"; // Nome da propriedade no seu objeto de dados
+            colunaID.HeaderText = "ID";
+            dg.Columns.Add(colunaID);
+
+            DataGridViewTextBoxColumn colunaNome = new DataGridViewTextBoxColumn();
+            colunaNome.DataPropertyName = "Nome"; // Nome da propriedade no seu objeto de dados
+            colunaNome.HeaderText = "Nome";
+            dg.Columns.Add(colunaNome);
+
+            DataGridViewTextBoxColumn colunaData = new DataGridViewTextBoxColumn();
+            colunaData.DataPropertyName = "DataNascimento"; // Nome da propriedade no seu objeto de dados
+            colunaData.HeaderText = "Data de Nascimento";
+            colunaData.DefaultCellStyle.Format = "dd/MM/yyyy"; // Formato da data
+            dg.Columns.Add(colunaData);
+
+            // Configurar o estilo escuro
+            dg.BackgroundColor = Color.FromArgb(45, 45, 48);
+            dg.DefaultCellStyle.BackColor = Color.FromArgb(28, 28, 28);
+            dg.DefaultCellStyle.ForeColor = Color.White;
+            dg.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(45, 45, 48);
+            dg.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+            dg.RowHeadersDefaultCellStyle.BackColor = Color.FromArgb(45, 45, 48);
+            dg.RowHeadersDefaultCellStyle.ForeColor = Color.White;
+
+            //// Configurar o alinhamento das células
+            //dg.Columns["ID"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            //dg.Columns["Nome"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            //dg.Columns["DataNascimento"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+
+            //// Preencher a grade com dados fictícios para teste
+            dg.Rows.Add(1, "João", new DateTime(1990, 5, 15));
+            dg.Rows.Add(2, "Maria", new DateTime(1985, 10, 22));
+            dg.Rows.Add(3, "Carlos", new DateTime(1995, 3, 8));
         }
 
         private void Listar()
@@ -34,8 +80,6 @@ namespace GifConfeitaria
                 };
                 dataAdapter.Fill(table);
                 bindingSource1.DataSource = table;
-
-                dg.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
             }
             catch (SqlException ex)
             {
@@ -144,7 +188,7 @@ namespace GifConfeitaria
 
         private void FrmPrecos_Load(object sender, EventArgs e)
         {
-            Listar();
+           // Listar();
         }
     }
 }
