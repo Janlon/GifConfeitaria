@@ -28,40 +28,40 @@
         /// </summary>
         private void InitializeComponent()
         {
-            dataGridViewProdutos = new DataGridView();
-            ((System.ComponentModel.ISupportInitialize)dataGridViewProdutos).BeginInit();
+            dg = new DataGridView();
+            ((System.ComponentModel.ISupportInitialize)dg).BeginInit();
             SuspendLayout();
             // 
-            // dataGridViewProdutos
+            // dg
             // 
-            dataGridViewProdutos.AllowUserToOrderColumns = true;
-            dataGridViewProdutos.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewProdutos.Dock = DockStyle.Fill;
-            dataGridViewProdutos.Location = new Point(0, 0);
-            dataGridViewProdutos.Margin = new Padding(3, 4, 3, 4);
-            dataGridViewProdutos.Name = "dataGridViewProdutos";
-            dataGridViewProdutos.RowHeadersWidth = 51;
-            dataGridViewProdutos.Size = new Size(723, 600);
-            dataGridViewProdutos.TabIndex = 0;
-            dataGridViewProdutos.CellEndEdit += dataGridViewProdutos_CellEndEdit;
-            dataGridViewProdutos.CellValidating += dataGridViewProdutos_CellValidating;
+            dg.AllowUserToOrderColumns = true;
+            dg.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dg.Dock = DockStyle.Fill;
+            dg.Location = new Point(0, 0);
+            dg.Margin = new Padding(5, 6, 5, 6);
+            dg.Name = "dg";
+            dg.RowHeadersWidth = 51;
+            dg.Size = new Size(803, 468);
+            dg.TabIndex = 0;
+            dg.CellEndEdit += dg_CellEndEdit;
             // 
             // FrmProdutos
             // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleDimensions = new SizeF(13F, 31F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(723, 600);
-            Controls.Add(dataGridViewProdutos);
-            Margin = new Padding(3, 4, 3, 4);
+            ClientSize = new Size(803, 468);
+            Controls.Add(dg);
+            Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            Margin = new Padding(5, 6, 5, 6);
             Name = "FrmProdutos";
             Text = "FrmProdutos";
             Load += FrmProdutos_Load;
-            ((System.ComponentModel.ISupportInitialize)dataGridViewProdutos).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dg).EndInit();
             ResumeLayout(false);
         }
 
         #endregion
 
-        private DataGridView dataGridViewProdutos;
+        private DataGridView dg;
     }
 }

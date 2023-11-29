@@ -28,12 +28,40 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Text = "FrmOrcamentos";
+            dg = new DataGridView();
+            ((System.ComponentModel.ISupportInitialize)dg).BeginInit();
+            SuspendLayout();
+            // 
+            // dg
+            // 
+            dg.AllowUserToOrderColumns = true;
+            dg.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dg.Dock = DockStyle.Fill;
+            dg.Location = new Point(0, 0);
+            dg.Margin = new Padding(5, 5, 5, 5);
+            dg.Name = "dg";
+            dg.RowHeadersWidth = 51;
+            dg.Size = new Size(803, 468);
+            dg.TabIndex = 0;
+            dg.CellEndEdit += dg_CellEndEdit;
+            // 
+            // FrmOrcamentos
+            // 
+            AutoScaleDimensions = new SizeF(13F, 31F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(803, 468);
+            Controls.Add(dg);
+            Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            Margin = new Padding(5, 5, 5, 5);
+            Name = "FrmOrcamentos";
+            Text = "FrmOrcamentos";
+            Load += FrmOrcamentos_Load;
+            ((System.ComponentModel.ISupportInitialize)dg).EndInit();
+            ResumeLayout(false);
         }
 
         #endregion
+
+        private DataGridView dg;
     }
 }

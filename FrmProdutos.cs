@@ -20,14 +20,10 @@ namespace GifConfeitaria
             InitializeComponent();
         }
 
-
-
         private void Listar()
         {
             try
             {
-                dataGridViewProdutos.DataSource = bindingSource1;
-
                 string query = "SELECT [Id],[Nome] FROM [confeitaria].[dbo].[Produtos]";
 
                 dataAdapter = new SqlDataAdapter(query, connectionString);
@@ -39,17 +35,16 @@ namespace GifConfeitaria
                     Locale = CultureInfo.InvariantCulture
                 };
                 dataAdapter.Fill(table);
+
+                dg.DataSource = bindingSource1;
                 bindingSource1.DataSource = table;
 
-                dataGridViewProdutos.AutoResizeColumns(
-                    DataGridViewAutoSizeColumnsMode.AllCellsExceptHeader);
             }
             catch (SqlException ex)
             {
                 MessageBox.Show(ex.Message);
             }
         }
-
 
         private void Gravar(int id, string? nome)
         {
@@ -58,16 +53,15 @@ namespace GifConfeitaria
 
                 if (nome == null) return;
 
-                dataGridViewProdutos.DataSource = bindingSource1;
                 if (id > 0)
                 {
-                    Alterar(id, nome);
+                    Alterar(id, nome.Trim().ToUpper());
                 }
                 else
                 {
-                    Incluir(nome);
+                    Incluir(nome.Trim().ToUpper());
                 }
-                MessageBox.Show("Dados gravados com sucesso.", "Registro", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                //MessageBox.Show("Dados gravados com sucesso.", "Registro", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)
             {
@@ -82,7 +76,7 @@ namespace GifConfeitaria
                 string query = "INSERT INTO PRODUTOS(Nome) VALUES (@Nome)";
                 connection.Open();
                 SqlCommand cmd = new(query, connection);
-                cmd.Parameters.AddWithValue("@Nome", nome);
+                cmd.Parameters.AddWithValue("@Nome", nome.Trim().ToUpper());
 
                 cmd.ExecuteNonQuery();
                 connection.Close();
@@ -102,7 +96,7 @@ namespace GifConfeitaria
                 connection.Open();
                 SqlCommand cmd = new(query, connection);
                 cmd.Parameters.AddWithValue("@Id", id);
-                cmd.Parameters.AddWithValue("@Nome", nome);
+                cmd.Parameters.AddWithValue("@Nome", nome.Trim().ToUpper());
 
                 cmd.ExecuteNonQuery();
                 connection.Close();
@@ -114,29 +108,24 @@ namespace GifConfeitaria
             Listar();
         }
 
-        private void dataGridViewProdutos_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        private void dg_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
-            if (dataGridViewProdutos.CurrentRow == null) return;
+            if (dg.CurrentRow == null) return;
 
-            var valorId = dataGridViewProdutos.CurrentRow.Cells["Id"].Value.ToString();
+            var valorId = dg.CurrentRow.Cells["Id"].Value.ToString();
             int id = 0;
             if (valorId != string.Empty)
             {
                 id = Convert.ToInt32(valorId);
             }
 
-            var nome = dataGridViewProdutos.CurrentRow.Cells["Nome"].Value.ToString();
+            var nome = dg.CurrentRow.Cells["Nome"].Value.ToString();
             if (nome == string.Empty)
             {
                 return;
             }
 
-            Gravar(id, nome);
-        }
-
-        private void dataGridViewProdutos_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
-        {  
-           
+            Gravar(id, nome.Trim().ToUpper());
         }
     }
 }
