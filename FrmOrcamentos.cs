@@ -1,7 +1,5 @@
 ﻿using System.Data;
 using System.Data.SqlClient;
-using System.Globalization;
-using System.Windows.Forms;
 
 namespace GifConfeitaria
 {
@@ -25,34 +23,40 @@ namespace GifConfeitaria
             dg.AutoGenerateColumns = false;
 
             // Adicionar colunas à grade
-            DataGridViewTextBoxColumn colunaID = new DataGridViewTextBoxColumn();
-            colunaID.DataPropertyName = "Id"; // Nome da propriedade no seu objeto de dados
+            DataGridViewTextBoxColumn colunaID = new();
+            colunaID.DataPropertyName = "Id";
             colunaID.HeaderText = "Registro";
             dg.Columns.Add(colunaID);
             dg.Columns[0].Width = 100;
 
-            DataGridViewComboBoxColumn colunaNome = new DataGridViewComboBoxColumn();
-            colunaNome.DataPropertyName = "Nome"; // Nome da propriedade no seu objeto de dados
+            DataGridViewComboBoxColumn colunaNome = new();
+            colunaNome.DataPropertyName = "Nome";
             colunaNome.HeaderText = "Produto";
             dg.Columns.Add(colunaNome);
             dg.Columns[1].Width = 300;
 
-            DataGridViewTextBoxColumn colunaMedida = new DataGridViewTextBoxColumn();
-            colunaMedida.DataPropertyName = "Medida"; // Nome da propriedade no seu objeto de dados
+            DataGridViewComboBoxColumn colunaMedida = new();
+            colunaMedida.DataPropertyName = "Medida";
             colunaMedida.HeaderText = "Medida";
+            // Adicione os itens ao ComboBox
+            colunaMedida.Items.Add("KG");
+            colunaMedida.Items.Add("GR");
+            colunaMedida.Items.Add("LT");
+            colunaMedida.Items.Add("CX");
+            colunaMedida.Items.Add("UN");
             dg.Columns.Add(colunaMedida);
             dg.Columns[2].Width = 100;
 
-            DataGridViewTextBoxColumn colunaQuantidade = new DataGridViewTextBoxColumn();
-            colunaQuantidade.DataPropertyName = "Quantidade"; // Nome da propriedade no seu objeto de dados
+            DataGridViewTextBoxColumn colunaQuantidade = new();
+            colunaQuantidade.DataPropertyName = "Quantidade";
             colunaQuantidade.HeaderText = "Qtd";
             dg.Columns.Add(colunaQuantidade);
             dg.Columns[3].Width = 100;
 
-            DataGridViewTextBoxColumn colunaPreco = new DataGridViewTextBoxColumn();
-            colunaPreco.DataPropertyName = "Preco"; // Nome da propriedade no seu objeto de dados
-            colunaPreco.HeaderText = "Preço";
-            colunaPreco.DefaultCellStyle.Format = "00.00"; // Formato da data
+            DataGridViewTextBoxColumn colunaPreco = new();
+            colunaPreco.DataPropertyName = "Preco";
+            colunaPreco.HeaderText = "Fração";
+            colunaPreco.DefaultCellStyle.Format = "00.00";
             dg.Columns.Add(colunaPreco);
             dg.Columns[4].Width = 160;
 
@@ -115,7 +119,6 @@ namespace GifConfeitaria
                                         }
                                     }
                                 }
-
                             }
 
                             //adicione uma nova linha ao DataTable com o valor do somatório.
@@ -175,11 +178,6 @@ namespace GifConfeitaria
             }
         }
 
-        private void Excluir()
-        {
-
-        }
-
         private void Alterar(int id, int precoId, int produtoId, string medida, int quantidade, double preco, double total)
         {
             using (SqlConnection connection = new(connectionString))
@@ -204,35 +202,40 @@ namespace GifConfeitaria
         {
             if (dg.CurrentRow == null) return;
 
-            var valorId = dg.CurrentRow.Cells["Id"].Value.ToString();
+            //Id
+            var valorId = dg.CurrentRow.Cells[0].Value;
             int id = 0;
-            if (valorId != string.Empty)
+            if (valorId != null)
             {
                 id = Convert.ToInt32(valorId);
             }
 
-            var medida = dg.CurrentRow.Cells["Medida"].Value.ToString();
-
-            var valorProdutoId = dg.CurrentRow.Cells["ProdutoId"].Value.ToString();
-            int idproduto = 0;
-            if (valorProdutoId != string.Empty)
+            //Tabela Precos (Nome)
+            var valorPrecoId = dg.CurrentRow.Cells[1].Value.ToString();
+            int idpreco = 0;
+            if (valorPrecoId != string.Empty)
             {
-                idproduto = Convert.ToInt32(valorProdutoId);
+                idpreco = Convert.ToInt32(valorPrecoId);
             }
 
-            var valorQuantidade = dg.CurrentRow.Cells["Quantidade"].Value.ToString();
+            //Medida
+            var medida = dg.CurrentRow.Cells[2].Value;
+            medida ??= "KG";
+
+            //Quantidade
+            var valorQuantidade = dg.CurrentRow.Cells[3].Value;
             int quantidade = 0;
-            if (valorQuantidade != string.Empty)
+            valorQuantidade ??= 0;
+            if (valorQuantidade != null)
             {
                 quantidade = Convert.ToInt32(valorQuantidade);
             }
 
-            var valorPrecoId = dg.CurrentRow.Cells["PrecoId"].Value.ToString();
-            int idpreco = 0;
+            //Fração do preco
+            var valorPreco = dg.CurrentRow.Cells[4].Value;
             double preco = 0;
-            if (valorPrecoId != string.Empty)
+            if (valorPreco != null)
             {
-                idpreco = Convert.ToInt32(valorPrecoId);
                 double precoProduto = PesquisarPreco(idpreco);
                 int quantidadeProduto = PesquisarQuantidade(idpreco);
                 if (precoProduto > 0)
@@ -241,14 +244,9 @@ namespace GifConfeitaria
                 }
             }
 
-            var valortotal = dg.CurrentRow.Cells["Total"].Value.ToString();
-            double total = 0;
-            if (valortotal != string.Empty)
-            {
-                total = Convert.ToDouble(valortotal);
-            }
+            int idproduto = Convert.ToInt32(txtIdProduto.Text);
 
-            Gravar(id, idpreco, idproduto, medida, quantidade, preco, total);
+            Gravar(id, idpreco, idproduto, medida.ToString(), quantidade, preco,0);
         }
 
         private int PesquisarQuantidade(int id)
@@ -380,6 +378,7 @@ namespace GifConfeitaria
             ComboBox cmb = (ComboBox)sender;
             if (cmb.SelectedValue is int selectedValue)
             {
+                txtIdProduto.Text = selectedValue.ToString();
                 Listar(selectedValue);
             }
         }

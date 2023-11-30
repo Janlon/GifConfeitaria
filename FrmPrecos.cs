@@ -26,35 +26,40 @@ namespace GifConfeitaria
             dg.AutoGenerateColumns = false;
 
             // Adicionar colunas à grade
-            DataGridViewTextBoxColumn colunaID = new DataGridViewTextBoxColumn();
+            DataGridViewTextBoxColumn colunaID = new();
             colunaID.DataPropertyName = "Id"; // Nome da propriedade no seu objeto de dados
             colunaID.HeaderText = "Registro";
             dg.Columns.Add(colunaID);
             dg.Columns[0].Width = 100;
 
-            DataGridViewTextBoxColumn colunaNome = new DataGridViewTextBoxColumn();
+            DataGridViewTextBoxColumn colunaNome = new();
             colunaNome.DataPropertyName = "Nome"; // Nome da propriedade no seu objeto de dados
             colunaNome.HeaderText = "Nome";
             dg.Columns.Add(colunaNome);
             dg.Columns[1].Width = 300;
 
-            DataGridViewTextBoxColumn colunaMedida = new DataGridViewTextBoxColumn();
-            colunaMedida.DataPropertyName = "Medida"; // Nome da propriedade no seu objeto de dados
+            DataGridViewComboBoxColumn colunaMedida = new();
+            colunaMedida.DataPropertyName = "Medida";
             colunaMedida.HeaderText = "Medida";
-           // colunaMedida.DefaultCellStyle.Format = "dd/MM/yyyy"; // Formato da data
+            // Adicione os itens ao ComboBox
+            colunaMedida.Items.Add("KG");
+            colunaMedida.Items.Add("GR");
+            colunaMedida.Items.Add("LT");
+            colunaMedida.Items.Add("CX");
+            colunaMedida.Items.Add("UN");
             dg.Columns.Add(colunaMedida);
             dg.Columns[2].Width = 100;
 
-            DataGridViewTextBoxColumn colunaQuantidade = new DataGridViewTextBoxColumn();
-            colunaQuantidade.DataPropertyName = "Quantidade"; // Nome da propriedade no seu objeto de dados
+            DataGridViewTextBoxColumn colunaQuantidade = new();
+            colunaQuantidade.DataPropertyName = "Quantidade";
             colunaQuantidade.HeaderText = "Qtd";
             dg.Columns.Add(colunaQuantidade);
             dg.Columns[3].Width = 100;
 
-            DataGridViewTextBoxColumn colunaPreco = new DataGridViewTextBoxColumn();
-            colunaPreco.DataPropertyName = "Preco"; // Nome da propriedade no seu objeto de dados
+            DataGridViewTextBoxColumn colunaPreco = new();
+            colunaPreco.DataPropertyName = "Preco";
             colunaPreco.HeaderText = "Preco";
-            colunaPreco.DefaultCellStyle.Format = "00.00"; // Formato da data
+            colunaPreco.DefaultCellStyle.Format = "00.00";
             dg.Columns.Add(colunaPreco);
             dg.Columns[4].Width = 160;
 

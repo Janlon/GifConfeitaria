@@ -32,6 +32,7 @@
             comboBox1 = new ComboBox();
             tableLayoutPanel1 = new TableLayoutPanel();
             dg = new DataGridView();
+            txtIdProduto = new TextBox();
             tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dg).BeginInit();
             SuspendLayout();
@@ -75,11 +76,19 @@
             dg.CellEndEdit += dg_CellEndEdit;
             dg.RowPrePaint += dg_RowPrePaint;
             // 
+            // txtIdProduto
+            // 
+            txtIdProduto.Location = new Point(0, 0);
+            txtIdProduto.Name = "txtIdProduto";
+            txtIdProduto.Size = new Size(100, 32);
+            txtIdProduto.TabIndex = 1;
+            // 
             // FrmOrcamentos
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(413, 255);
+            Controls.Add(txtIdProduto);
             Controls.Add(tableLayoutPanel1);
             Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
             Icon = (Icon)resources.GetObject("$this.Icon");
@@ -92,11 +101,13 @@
             tableLayoutPanel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dg).EndInit();
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
         private ComboBox comboBox1;
         private TableLayoutPanel tableLayoutPanel1;
         private DataGridView dg;
+        private TextBox txtIdProduto;
     }
 }
