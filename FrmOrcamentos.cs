@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using System.Data.SqlClient;
 using System.Globalization;
+using System.Windows.Forms;
 
 namespace GifConfeitaria
 {
@@ -69,7 +70,6 @@ namespace GifConfeitaria
         {
             try
             {
-
                 dg.Rows.Clear();
 
                 using (SqlConnection connection = new(connectionString))
@@ -77,16 +77,17 @@ namespace GifConfeitaria
                     string query = "SELECT [confeitaria].[dbo].[Orcamentos].[Id],[confeitaria].[dbo].Precos.Nome,[confeitaria].[dbo].[Orcamentos].[Medida],[confeitaria].[dbo].[Orcamentos].[Quantidade],[confeitaria].[dbo].[Orcamentos].[Preco] FROM [confeitaria].[dbo].[Orcamentos] INNER JOIN [confeitaria].[dbo].Precos ON [PrecoId] = [confeitaria].[dbo].Precos.[Id] WHERE [ProdutoId] = " + id;
                     connection.Open();
 
-                    using (SqlCommand command = new SqlCommand(query, connection))
+                    using (SqlCommand command = new(query, connection))
                     {
                         // Crie um adaptador de dados
-                        using (SqlDataAdapter adapter = new SqlDataAdapter(command))
+                        using (SqlDataAdapter adapter = new(command))
                         {
                             // Crie um DataTable para armazenar os dados
                             DataTable dataTable = new DataTable();
 
                             // Preencha o DataTable com os dados do banco de dados
                             adapter.Fill(dataTable);
+                            decimal total = 0;
 
                             foreach (DataRow row in dataTable.Rows)
                             {
@@ -98,17 +99,32 @@ namespace GifConfeitaria
                                 {
                                     dg.Rows[index].Cells[i].Value = row[i];
 
-                                    if(i == 4)
+                                    if (i == 4)
                                     {
                                         DataGridViewComboBoxCell cb = (DataGridViewComboBoxCell)dg.Rows[index].Cells[i];
-                                        cb.DataSource = CarregarListaPrecos;
+                                        cb.DataSource = CarregarListaPrecos();
                                         cb.ValueMember = "Id";
                                         cb.DisplayMember = "Nome";
                                     }
 
-    
+                                    if (i == 3)
+                                    {
+                                        if (dg.Rows[index].Cells[i] != null)
+                                        {
+                                            total += Convert.ToDecimal(dg.Rows[index].Cells[i]);
+                                        }
+                                    }
                                 }
+
                             }
+
+                            //adicione uma nova linha ao DataTable com o valor do somatório.
+                            DataTable dt = (DataTable)dg.DataSource;
+                            DataRow totalRow = dt.NewRow();
+                            totalRow["Total"] = total;
+                            dt.Rows.Add(totalRow);
+
+                            dg.DataSource = dt;
                         }
                     }
                 }
@@ -240,7 +256,6 @@ namespace GifConfeitaria
             int qtdPreco = 0;
             try
             {
-
                 using (SqlConnection connection = new(connectionString))
                 {
                     string query = "SELECT [Quantidade] FROM [confeitaria].[dbo].[Precos] WHERE Id = @Id";
@@ -253,7 +268,6 @@ namespace GifConfeitaria
 
                     return qtdPreco;
                 }
-
             }
             catch (SqlException ex)
             {
@@ -304,7 +318,7 @@ namespace GifConfeitaria
                     string query = "SELECT [Id],[Nome] FROM [confeitaria].[dbo].[Produtos]";
                     connection.Open();
 
-                    using (SqlCommand command = new SqlCommand(query, connection))
+                    using (SqlCommand command = new(query, connection))
                     {
                         // Crie um adaptador de dados
                         using (SqlDataAdapter adapter = new SqlDataAdapter(command))
@@ -337,13 +351,13 @@ namespace GifConfeitaria
                     string query = "SELECT [Id],[Nome] FROM [confeitaria].[dbo].[Precos]";
                     connection.Open();
 
-                    using (SqlCommand command = new SqlCommand(query, connection))
+                    using (SqlCommand command = new(query, connection))
                     {
                         // Crie um adaptador de dados
-                        using (SqlDataAdapter adapter = new SqlDataAdapter(command))
+                        using (SqlDataAdapter adapter = new(command))
                         {
                             // Crie um DataTable para armazenar os dados
-                            DataTable dataTable = new DataTable();
+                            DataTable dataTable = new();
 
                             // Preencha o DataTable com os dados do banco de dados
                             adapter.Fill(dataTable);
@@ -358,35 +372,24 @@ namespace GifConfeitaria
                 MessageBox.Show(ex.Message);
             }
 
-            return null;
-        }
-
-        private void comboBox1_SelectedValueChanged(object sender, EventArgs e)
-        {
-            if (comboBox1.SelectedValue != null)
-            {
-                //var id = ((System.Data.DataRowView)comboBox1.SelectedValue).Row.ItemArray[0];
-                //if(id != null)
-                //{
-                //    Listar(Convert.ToInt32(id));
-                //}
-            }
+            return new DataTable();
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            try
+            ComboBox cmb = (ComboBox)sender;
+            if (cmb.SelectedValue is int selectedValue)
             {
-                ComboBox cmb = (ComboBox)sender;
-                int selectedIndex = cmb.SelectedIndex;
-                int selectedValue = (int)cmb.SelectedValue;
                 Listar(selectedValue);
             }
-            catch (Exception)
+        }
+
+        private void dg_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)
+        {
+            if (e.RowIndex == dg.Rows.Count - 1)
             {
-
+                dg.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.LightGray;
             }
-
         }
     }
 }

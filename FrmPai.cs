@@ -1,4 +1,5 @@
-using Microsoft.VisualBasic;
+using System.Speech.AudioFormat;
+using System.Speech.Synthesis;
 
 namespace GifConfeitaria
 {
@@ -7,6 +8,18 @@ namespace GifConfeitaria
         public FrmPai()
         {
             InitializeComponent();
+
+            Abertura();
+        }
+
+        private void Abertura()
+        {
+            using (SpeechSynthesizer synth = new())
+            {
+                synth.SetOutputToDefaultAudioDevice();
+                synth.Rate = 4;
+                synth.Speak("Olá Giovanna!");
+            }
         }
 
         private void btnPrecos_Click(object sender, EventArgs e)

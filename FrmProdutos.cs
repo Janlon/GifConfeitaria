@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using System.Data.SqlClient;
+using System.Windows.Forms;
 
 namespace GifConfeitaria
 {
@@ -55,7 +56,7 @@ namespace GifConfeitaria
                 {
                     string query = "SELECT [Id],[Nome] FROM [confeitaria].[dbo].[Produtos]";
                     connection.Open();
-  
+
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {
                         // Crie um adaptador de dados
@@ -125,11 +126,6 @@ namespace GifConfeitaria
             }
         }
 
-        private void Excluir()
-        {
-
-        }
-
         private void Alterar(int id, string nome)
         {
             using (SqlConnection connection = new(connectionString))
@@ -175,7 +171,44 @@ namespace GifConfeitaria
             {
                 MessageBox.Show(ex.Message);
             }
-           
+
+        }
+
+        private void dg_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Delete)
+            {
+                // Verifique se há pelo menos uma linha selecionada
+                if (dg.SelectedRows.Count > 0)
+                {
+                    // Obtenha o índice da linha selecionada
+                    int rowIndex = dg.SelectedRows[0].Index;
+
+                    // Obtenha o valor da chave primária do registro a ser excluído (substitua "ID" pelo nome da sua coluna de chave primária)
+                    int id = Convert.ToInt32(dg.Rows[rowIndex].Cells["Id"].Value);
+
+                    // Obtenha o DataTable
+                    DataTable dt = (DataTable)dg.DataSource;
+
+                    // Remova a linha do DataTable
+                    dt.Rows.RemoveAt(rowIndex);
+
+                    // Atualize o DataGridView
+                    dg.DataSource = dt;
+
+                    // Exclua o registro do banco de dados (substitua "SuaTabela" pelo nome da sua tabela e "ID" pelo nome da sua coluna de chave primária)
+                    using (SqlConnection connection = new SqlConnection(connectionString))
+                    {
+                        connection.Open();
+
+                        using (SqlCommand command = new SqlCommand("DELETE FROM PRODUTOS WHERE ID = @ID", connection))
+                        {
+                            command.Parameters.AddWithValue("@ID", id);
+                            command.ExecuteNonQuery();
+                        }
+                    }
+                }
+            }
         }
     }
 }

@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmOrcamentos));
             comboBox1 = new ComboBox();
             tableLayoutPanel1 = new TableLayoutPanel();
             dg = new DataGridView();
@@ -41,10 +42,9 @@
             comboBox1.FormattingEnabled = true;
             comboBox1.Location = new Point(3, 3);
             comboBox1.Name = "comboBox1";
-            comboBox1.Size = new Size(741, 39);
+            comboBox1.Size = new Size(407, 33);
             comboBox1.TabIndex = 2;
             comboBox1.SelectedIndexChanged += comboBox1_SelectedIndexChanged;
-            comboBox1.SelectedValueChanged += comboBox1_SelectedValueChanged;
             // 
             // tableLayoutPanel1
             // 
@@ -58,7 +58,7 @@
             tableLayoutPanel1.RowCount = 2;
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 13.4670486F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 86.53295F));
-            tableLayoutPanel1.Size = new Size(747, 349);
+            tableLayoutPanel1.Size = new Size(413, 255);
             tableLayoutPanel1.TabIndex = 0;
             // 
             // dg
@@ -66,24 +66,28 @@
             dg.AllowUserToOrderColumns = true;
             dg.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dg.Dock = DockStyle.Fill;
-            dg.Location = new Point(5, 52);
+            dg.Location = new Point(5, 39);
             dg.Margin = new Padding(5);
             dg.Name = "dg";
             dg.RowHeadersWidth = 51;
-            dg.Size = new Size(737, 292);
+            dg.Size = new Size(403, 211);
             dg.TabIndex = 1;
             dg.CellEndEdit += dg_CellEndEdit;
+            dg.RowPrePaint += dg_RowPrePaint;
             // 
             // FrmOrcamentos
             // 
-            AutoScaleDimensions = new SizeF(13F, 31F);
+            AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(747, 349);
+            ClientSize = new Size(413, 255);
             Controls.Add(tableLayoutPanel1);
             Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Margin = new Padding(5);
+            MaximizeBox = false;
+            MinimizeBox = false;
             Name = "FrmOrcamentos";
-            Text = "Meus Gastos";
+            Text = "Meus Gastos - Custos do Produto";
             Load += FrmOrcamentos_Load;
             tableLayoutPanel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dg).EndInit();

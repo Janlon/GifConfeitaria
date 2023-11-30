@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmProdutos));
             dg = new DataGridView();
             ((System.ComponentModel.ISupportInitialize)dg).BeginInit();
             SuspendLayout();
@@ -41,20 +42,24 @@
             dg.Margin = new Padding(5, 6, 5, 6);
             dg.Name = "dg";
             dg.RowHeadersWidth = 51;
-            dg.Size = new Size(803, 468);
+            dg.Size = new Size(472, 226);
             dg.TabIndex = 0;
             dg.CellEndEdit += dg_CellEndEdit;
+            dg.KeyDown += dg_KeyDown;
             // 
             // FrmProdutos
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(803, 468);
+            ClientSize = new Size(472, 226);
             Controls.Add(dg);
             Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Margin = new Padding(5, 6, 5, 6);
+            MaximizeBox = false;
+            MinimizeBox = false;
             Name = "FrmProdutos";
-            Text = "Meus Produtos";
+            Text = "Meus Produtos - Bolos & Doces";
             Load += FrmProdutos_Load;
             ((System.ComponentModel.ISupportInitialize)dg).EndInit();
             ResumeLayout(false);
