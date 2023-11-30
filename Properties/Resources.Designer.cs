@@ -73,6 +73,16 @@ namespace GifConfeitaria.Properties {
         /// <summary>
         ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap _2138186_baker_bakery_cupcake_dessert_food_icon1 {
+            get {
+                object obj = ResourceManager.GetObject("2138186_baker_bakery_cupcake_dessert_food_icon1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Cupcake_PNG_Picture_3918432840 {
             get {
                 object obj = ResourceManager.GetObject("Cupcake-PNG-Picture-3918432840", resourceCulture);

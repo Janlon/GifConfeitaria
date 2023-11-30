@@ -18,7 +18,6 @@ namespace GifConfeitaria
         private void ConfigurarGrade()
         {
             WindowState = FormWindowState.Maximized; // Maximiza o formulário ao abrir
-            // Dock = DockStyle.Fill; // Preenche todo o espaço disponível
 
             // Definir o modo de exibição da grade
             dg.AutoGenerateColumns = false;
@@ -26,13 +25,15 @@ namespace GifConfeitaria
             // Adicionar colunas à grade
             DataGridViewTextBoxColumn colunaID = new DataGridViewTextBoxColumn();
             colunaID.DataPropertyName = "Id"; // Nome da propriedade no seu objeto de dados
-            colunaID.HeaderText = "Id";
+            colunaID.HeaderText = "Registro";
+            colunaID.SortMode = DataGridViewColumnSortMode.Automatic;
             dg.Columns.Add(colunaID);
-            dg.Columns[0].Width = 50;
+            dg.Columns[0].Width = 100;
 
             DataGridViewTextBoxColumn colunaNome = new DataGridViewTextBoxColumn();
             colunaNome.DataPropertyName = "Nome"; // Nome da propriedade no seu objeto de dados
             colunaNome.HeaderText = "Nome";
+            colunaNome.SortMode = DataGridViewColumnSortMode.Automatic;
             dg.Columns.Add(colunaNome);
             dg.Columns[1].Width = 650;
 
@@ -46,14 +47,13 @@ namespace GifConfeitaria
             dg.RowHeadersDefaultCellStyle.ForeColor = Color.White;
         }
 
-
         private void Listar()
         {
             try
             {
                 using (SqlConnection connection = new(connectionString))
                 {
-                    string query = "SELECT [Id],[Nome] FROM [Geca].[dbo].[Produtos]";
+                    string query = "SELECT [Id],[Nome] FROM [confeitaria].[dbo].[Produtos]";
                     connection.Open();
   
                     using (SqlCommand command = new SqlCommand(query, connection))
@@ -66,9 +66,6 @@ namespace GifConfeitaria
 
                             // Preencha o DataTable com os dados do banco de dados
                             adapter.Fill(dataTable);
-
-                            // Atribua o DataTable ao DataSource do DataGridView
-                            //dg.DataSource = dataTable;
 
                             foreach (DataRow row in dataTable.Rows)
                             {
@@ -84,21 +81,6 @@ namespace GifConfeitaria
                         }
                     }
                 }
-
-                //dataAdapter = new SqlDataAdapter(query, connectionString);
-
-                //SqlCommandBuilder commandBuilder = new(dataAdapter);
-
-                //DataTable table = new()
-                //{
-                //    Locale = CultureInfo.InvariantCulture
-                //};
-
-                //dataAdapter.Fill(table);
-
-                //dg.DataSource = bindingSource1;
-                //bindingSource1.DataSource = table;
-
             }
             catch (SqlException ex)
             {

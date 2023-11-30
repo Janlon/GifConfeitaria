@@ -43,10 +43,11 @@
             dg.RowHeadersWidth = 51;
             dg.Size = new Size(470, 167);
             dg.TabIndex = 1;
+            dg.CellEndEdit += dg_CellEndEdit;
             // 
             // FrmPrecos
             // 
-            AutoScaleDimensions = new SizeF(11F, 25F);
+            AutoScaleDimensions = new SizeF(13F, 32F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(470, 167);
             Controls.Add(dg);

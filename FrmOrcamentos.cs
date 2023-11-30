@@ -13,24 +13,105 @@ namespace GifConfeitaria
         public FrmOrcamentos()
         {
             InitializeComponent();
+            ConfigurarGrade();
         }
 
-        private void Listar()
+        private void ConfigurarGrade()
+        {
+            WindowState = FormWindowState.Maximized; // Maximiza o formulário ao abrir
+
+            // Definir o modo de exibição da grade
+            dg.AutoGenerateColumns = false;
+
+            // Adicionar colunas à grade
+            DataGridViewTextBoxColumn colunaID = new DataGridViewTextBoxColumn();
+            colunaID.DataPropertyName = "Id"; // Nome da propriedade no seu objeto de dados
+            colunaID.HeaderText = "Registro";
+            dg.Columns.Add(colunaID);
+            dg.Columns[0].Width = 100;
+
+            DataGridViewComboBoxColumn colunaNome = new DataGridViewComboBoxColumn();
+            colunaNome.DataPropertyName = "Nome"; // Nome da propriedade no seu objeto de dados
+            colunaNome.HeaderText = "Produto";
+            dg.Columns.Add(colunaNome);
+            dg.Columns[1].Width = 300;
+
+            DataGridViewTextBoxColumn colunaMedida = new DataGridViewTextBoxColumn();
+            colunaMedida.DataPropertyName = "Medida"; // Nome da propriedade no seu objeto de dados
+            colunaMedida.HeaderText = "Medida";
+            dg.Columns.Add(colunaMedida);
+            dg.Columns[2].Width = 100;
+
+            DataGridViewTextBoxColumn colunaQuantidade = new DataGridViewTextBoxColumn();
+            colunaQuantidade.DataPropertyName = "Quantidade"; // Nome da propriedade no seu objeto de dados
+            colunaQuantidade.HeaderText = "Qtd";
+            dg.Columns.Add(colunaQuantidade);
+            dg.Columns[3].Width = 100;
+
+            DataGridViewTextBoxColumn colunaPreco = new DataGridViewTextBoxColumn();
+            colunaPreco.DataPropertyName = "Preco"; // Nome da propriedade no seu objeto de dados
+            colunaPreco.HeaderText = "Preço";
+            colunaPreco.DefaultCellStyle.Format = "00.00"; // Formato da data
+            dg.Columns.Add(colunaPreco);
+            dg.Columns[4].Width = 160;
+
+            // Configurar o estilo escuro
+            dg.BackgroundColor = Color.FromArgb(45, 45, 48);
+            dg.DefaultCellStyle.BackColor = Color.FromArgb(28, 28, 28);
+            dg.DefaultCellStyle.ForeColor = Color.White;
+            dg.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(45, 45, 48);
+            dg.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+            dg.RowHeadersDefaultCellStyle.BackColor = Color.FromArgb(45, 45, 48);
+            dg.RowHeadersDefaultCellStyle.ForeColor = Color.White;
+        }
+
+        private void Listar(int id)
         {
             try
             {
-                dg.DataSource = bindingSource1;
-                string query = "SELECT * FROM [dbo].[Orcamentos]";
-                dataAdapter = new SqlDataAdapter(query, connectionString);
-                SqlCommandBuilder commandBuilder = new(dataAdapter);
-                DataTable table = new()
-                {
-                    Locale = CultureInfo.InvariantCulture
-                };
-                dataAdapter.Fill(table);
-                bindingSource1.DataSource = table;
 
-                dg.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCellsExceptHeader);
+                dg.Rows.Clear();
+
+                using (SqlConnection connection = new(connectionString))
+                {
+                    string query = "SELECT [confeitaria].[dbo].[Orcamentos].[Id],[confeitaria].[dbo].Precos.Nome,[confeitaria].[dbo].[Orcamentos].[Medida],[confeitaria].[dbo].[Orcamentos].[Quantidade],[confeitaria].[dbo].[Orcamentos].[Preco] FROM [confeitaria].[dbo].[Orcamentos] INNER JOIN [confeitaria].[dbo].Precos ON [PrecoId] = [confeitaria].[dbo].Precos.[Id] WHERE [ProdutoId] = " + id;
+                    connection.Open();
+
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        // Crie um adaptador de dados
+                        using (SqlDataAdapter adapter = new SqlDataAdapter(command))
+                        {
+                            // Crie um DataTable para armazenar os dados
+                            DataTable dataTable = new DataTable();
+
+                            // Preencha o DataTable com os dados do banco de dados
+                            adapter.Fill(dataTable);
+
+                            foreach (DataRow row in dataTable.Rows)
+                            {
+                                // Adicione uma nova linha ao DataGridView
+                                int index = dg.Rows.Add();
+
+                                // Itere pelas colunas e popule as células do DataGridView
+                                for (int i = 0; i < dataTable.Columns.Count; i++)
+                                {
+                                    dg.Rows[index].Cells[i].Value = row[i];
+
+                                    if(i == 4)
+                                    {
+                                        DataGridViewComboBoxCell cb = (DataGridViewComboBoxCell)dg.Rows[index].Cells[i];
+                                        cb.DataSource = CarregarListaPrecos;
+                                        cb.ValueMember = "Id";
+                                        cb.DisplayMember = "Nome";
+                                    }
+
+    
+                                }
+                            }
+                        }
+                    }
+                }
             }
             catch (SqlException ex)
             {
@@ -38,14 +119,12 @@ namespace GifConfeitaria
             }
         }
 
-        private void Gravar(int id,int idPreco, int idProduto, string medida, int quantidade, double preco, double total)
+        private void Gravar(int id, int idPreco, int idProduto, string medida, int quantidade, double preco, double total)
         {
             try
             {
-
                 if (quantidade == 0) return;
 
-                dg.DataSource = bindingSource1;
                 if (id > 0)
                 {
                     Alterar(id, idPreco, idProduto, medida, quantidade, preco, total);
@@ -77,8 +156,6 @@ namespace GifConfeitaria
 
                 cmd.ExecuteNonQuery();
                 connection.Close();
-
-                Listar();
             }
         }
 
@@ -104,7 +181,6 @@ namespace GifConfeitaria
 
                 cmd.ExecuteNonQuery();
                 connection.Close();
-                Listar();
             }
         }
 
@@ -192,7 +268,7 @@ namespace GifConfeitaria
             double valorPreco = 0;
             try
             {
-                
+
                 using (SqlConnection connection = new(connectionString))
                 {
                     string query = "SELECT [Preco] FROM [confeitaria].[dbo].[Precos] WHERE Id = @Id";
@@ -216,26 +292,101 @@ namespace GifConfeitaria
 
         private void FrmOrcamentos_Load(object sender, EventArgs e)
         {
-            Listar();
-            CarregarComboBox();
+            CarregarComboBoxProdutos();
         }
 
-        private void CarregarComboBox()
+        private void CarregarComboBoxProdutos()
         {
             try
             {
-                using SqlConnection connection = new(connectionString);
-                using SqlCommand command = new("SELECT NomeDaColuna FROM SuaTabela", connection);
-                using SqlDataReader reader = command.ExecuteReader();
-                while (reader.Read())
+                using (SqlConnection connection = new(connectionString))
                 {
-                    comboBox1.Items.Add(reader["NomeDaColuna"].ToString());
+                    string query = "SELECT [Id],[Nome] FROM [confeitaria].[dbo].[Produtos]";
+                    connection.Open();
+
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        // Crie um adaptador de dados
+                        using (SqlDataAdapter adapter = new SqlDataAdapter(command))
+                        {
+                            // Crie um DataTable para armazenar os dados
+                            DataTable dataTable = new DataTable();
+
+                            // Preencha o DataTable com os dados do banco de dados
+                            adapter.Fill(dataTable);
+
+                            comboBox1.DataSource = dataTable;
+                            comboBox1.DisplayMember = "Nome";
+                            comboBox1.ValueMember = "Id";
+                        }
+                    }
                 }
             }
             catch (SqlException ex)
             {
                 MessageBox.Show(ex.Message);
-            }       
+            }
+        }
+
+        private DataTable CarregarListaPrecos()
+        {
+            try
+            {
+                using (SqlConnection connection = new(connectionString))
+                {
+                    string query = "SELECT [Id],[Nome] FROM [confeitaria].[dbo].[Precos]";
+                    connection.Open();
+
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        // Crie um adaptador de dados
+                        using (SqlDataAdapter adapter = new SqlDataAdapter(command))
+                        {
+                            // Crie um DataTable para armazenar os dados
+                            DataTable dataTable = new DataTable();
+
+                            // Preencha o DataTable com os dados do banco de dados
+                            adapter.Fill(dataTable);
+
+                            return dataTable;
+                        }
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
+            return null;
+        }
+
+        private void comboBox1_SelectedValueChanged(object sender, EventArgs e)
+        {
+            if (comboBox1.SelectedValue != null)
+            {
+                //var id = ((System.Data.DataRowView)comboBox1.SelectedValue).Row.ItemArray[0];
+                //if(id != null)
+                //{
+                //    Listar(Convert.ToInt32(id));
+                //}
+            }
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                ComboBox cmb = (ComboBox)sender;
+                int selectedIndex = cmb.SelectedIndex;
+                int selectedValue = (int)cmb.SelectedValue;
+                Listar(selectedValue);
+            }
+            catch (Exception)
+            {
+
+            }
+
         }
     }
 }
