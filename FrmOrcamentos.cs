@@ -38,11 +38,12 @@ namespace GifConfeitaria
             //dg.Columns[1].Width = 100;
             dg.Columns[1].Visible = false;
 
-            DataGridViewTextBoxColumn colunaNome = new();
+            DataGridViewComboBoxColumn colunaNome = new();
             colunaNome.DataPropertyName = "Nome";
             colunaNome.HeaderText = "Produto";
             dg.Columns.Add(colunaNome);
             dg.Columns[2].Width = 200;
+           // foreach (var row in CarregarListaPrecos()) { }
 
             DataGridViewTextBoxColumn colunaPreco = new();
             colunaPreco.DataPropertyName = "Preco";
@@ -125,74 +126,23 @@ namespace GifConfeitaria
                                     {
                                         dg.Rows[index].Cells[i].Value = precoProduto / quantidadeProduto * Convert.ToInt32(row.ItemArray[5]);
                                     }
+                                    //else if (i == 2)
+                                    //{
+                                    //    DataGridViewComboBoxCell cb = (DataGridViewComboBoxCell)dg.Rows[index].Cells[i];
+                                    //    cb.DataSource = CarregarListaPrecos();
+                                    //    cb.ValueMember = "Id";
+                                    //    cb.DisplayMember = "Nome";
+                                    //}
                                     else
                                     {
                                         dg.Rows[index].Cells[i].Value = row[i];
                                     }
-                                    
-                                   // dg.Rows[i].Cells[6].Value = precoProduto / quantidadeProduto * Convert.ToInt32(row.ItemArray[5]);
                                 }
 
-                                //dg.Rows[0].Cells[6].Value =  ;
-                                //row.ItemArray[6] = precoProduto / quantidadeProduto * Convert.ToInt32(row.ItemArray[5]);
-
-                                //for (int i = 0; i < dataTable.Columns.Count; i++)
-                                //{
-                                //    dg.Rows[row.ItemArray[3]].Cells[i].Value = row[i];
-                                //}
-
-                                // total += Convert.ToDecimal(fracao);
-                                //precoProduto / quantidadeProduto) * quantidadedesejada
-
-                                ////Fração do preco
-                                //var valorPreco = dg.CurrentRow.Cells[4].Value;
-                                //double preco = 0;
-                                //if (valorPreco != null)
-                                //{
-                                //    double precoProduto = PesquisarPreco(idpreco);
-                                //    int quantidadeProduto = PesquisarQuantidade(idpreco);
-                                //    if (precoProduto > 0)
-                                //    {
-                                //        preco = (precoProduto / quantidadeProduto) * quantidade;
-                                //    }
-                                //}
-
-                                // Itere pelas colunas e popule as células do DataGridView
-                                //for (int i = 0; i < dataTable.Columns.Count; i++)
-                                //{
-                                //    dg.Rows[index].Cells[i].Value = row[i];
-
-                                //    //if (i == 4)
-                                //    //{
-                                //    //    DataGridViewComboBoxCell cb = (DataGridViewComboBoxCell)dg.Rows[index].Cells[i];
-                                //    //    cb.DataSource = CarregarListaPrecos();
-                                //    //    cb.ValueMember = "Id";
-                                //    //    cb.DisplayMember = "Nome";
-                                //    //}
-
-                                //    if (i == 4)
-                                //    {
-                                //        if (dg.Rows[index].Cells[i].Value != null)
-                                //        {
-                                //            total += Convert.ToDecimal(dg.Rows[index].Cells[i].Value);
-                                //        }
-                                //    }
-                                //}
                             }
 
                             lblTotal.Text = total.ToString("0.00");
 
-                            // int index = dg.Rows.Add();
-
-
-                            //adicione uma nova linha ao DataTable com o valor do somatório.
-                            //DataTable dt = (DataTable)dg.DataSource;
-                            
-                            //DataRow totalRow = dataTable.NewRow();
-                            ////totalRow["Total"] = total;
-                            //dataTable.Rows.Add(totalRow);
-
-                            //dg.DataSource = dataTable;
                         }
                     }
                 }
