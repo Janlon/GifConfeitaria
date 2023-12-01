@@ -29,36 +29,50 @@ namespace GifConfeitaria
             dg.Columns.Add(colunaID);
             dg.Columns[0].Width = 100;
 
-            DataGridViewComboBoxColumn colunaNome = new();
+            // Adicionar colunas à grade
+            DataGridViewTextBoxColumn colunaIDPreco = new();
+            colunaIDPreco.DataPropertyName = "IdPreco";
+            colunaIDPreco.HeaderText = "IdPreco";
+            dg.Columns.Add(colunaIDPreco);
+            dg.Columns[1].Width = 100;
+
+            DataGridViewTextBoxColumn colunaNome = new();
             colunaNome.DataPropertyName = "Nome";
             colunaNome.HeaderText = "Produto";
             dg.Columns.Add(colunaNome);
-            dg.Columns[1].Width = 300;
+            dg.Columns[2].Width = 200;
 
-            DataGridViewComboBoxColumn colunaMedida = new();
+            DataGridViewTextBoxColumn colunaPreco = new();
+            colunaPreco.DataPropertyName = "Preco";
+            colunaPreco.HeaderText = "Preco";
+            dg.Columns.Add(colunaPreco);
+            dg.Columns[3].Width = 100;
+
+            //DataGridViewComboBoxColumn colunaMedida = new();
+            DataGridViewTextBoxColumn colunaMedida = new();
             colunaMedida.DataPropertyName = "Medida";
             colunaMedida.HeaderText = "Medida";
             // Adicione os itens ao ComboBox
-            colunaMedida.Items.Add("KG");
-            colunaMedida.Items.Add("GR");
-            colunaMedida.Items.Add("LT");
-            colunaMedida.Items.Add("CX");
-            colunaMedida.Items.Add("UN");
+            //colunaMedida.Items.Add("KG");
+            //colunaMedida.Items.Add("GR");
+            //colunaMedida.Items.Add("LT");
+            //colunaMedida.Items.Add("CX");
+            //colunaMedida.Items.Add("UN");
             dg.Columns.Add(colunaMedida);
-            dg.Columns[2].Width = 100;
+            dg.Columns[4].Width = 100;
 
             DataGridViewTextBoxColumn colunaQuantidade = new();
             colunaQuantidade.DataPropertyName = "Quantidade";
             colunaQuantidade.HeaderText = "Qtd";
             dg.Columns.Add(colunaQuantidade);
-            dg.Columns[3].Width = 100;
+            dg.Columns[5].Width = 100;
 
-            DataGridViewTextBoxColumn colunaPreco = new();
-            colunaPreco.DataPropertyName = "Preco";
-            colunaPreco.HeaderText = "Fração";
-            colunaPreco.DefaultCellStyle.Format = "00.00";
-            dg.Columns.Add(colunaPreco);
-            dg.Columns[4].Width = 160;
+            DataGridViewTextBoxColumn colunaFracao = new();
+            colunaFracao.DataPropertyName = "Fracao";
+            colunaFracao.HeaderText = "Fração";
+            colunaFracao.DefaultCellStyle.Format = "00.00";
+            dg.Columns.Add(colunaFracao);
+            dg.Columns[6].Width = 130;
 
             // Configurar o estilo escuro
             dg.BackgroundColor = Color.FromArgb(45, 45, 48);
@@ -74,11 +88,9 @@ namespace GifConfeitaria
         {
             try
             {
-                dg.Rows.Clear();
-
                 using (SqlConnection connection = new(connectionString))
                 {
-                    string query = "SELECT [confeitaria].[dbo].[Orcamentos].[Id],[confeitaria].[dbo].Precos.Nome,[confeitaria].[dbo].[Orcamentos].[Medida],[confeitaria].[dbo].[Orcamentos].[Quantidade],[confeitaria].[dbo].[Orcamentos].[Preco] FROM [confeitaria].[dbo].[Orcamentos] INNER JOIN [confeitaria].[dbo].Precos ON [PrecoId] = [confeitaria].[dbo].Precos.[Id] WHERE [ProdutoId] = " + id;
+                    string query = "SELECT [confeitaria].[dbo].[Orcamentos].[Id], [confeitaria].[dbo].[Precos].[Id] AS IdPreco, [confeitaria].[dbo].[Precos].[Nome],[confeitaria].[dbo].[Precos].[Preco],[confeitaria].[dbo].[Orcamentos].[Medida],[confeitaria].[dbo].[Orcamentos].[Quantidade],[confeitaria].[dbo].[Orcamentos].[Preco] AS Fracao FROM [confeitaria].[dbo].[Orcamentos] INNER JOIN [confeitaria].[dbo].Precos ON [PrecoId] = [confeitaria].[dbo].Precos.[Id] WHERE [ProdutoId] = " + id;
                     connection.Open();
 
                     using (SqlCommand command = new(query, connection))
@@ -91,43 +103,93 @@ namespace GifConfeitaria
 
                             // Preencha o DataTable com os dados do banco de dados
                             adapter.Fill(dataTable);
-                            decimal total = 0;
+                            double total = 0;
+
+                           // dg.DataSource = dataTable;
 
                             foreach (DataRow row in dataTable.Rows)
                             {
                                 // Adicione uma nova linha ao DataGridView
                                 int index = dg.Rows.Add();
 
-                                // Itere pelas colunas e popule as células do DataGridView
+                                double precoProduto = PesquisarPreco(Convert.ToInt32(row.ItemArray[1]));
+                                int quantidadeProduto = PesquisarQuantidade(Convert.ToInt32(row.ItemArray[1]));
+                                total += precoProduto / quantidadeProduto * Convert.ToInt32(row.ItemArray[5]);
+
                                 for (int i = 0; i < dataTable.Columns.Count; i++)
                                 {
-                                    dg.Rows[index].Cells[i].Value = row[i];
-
-                                    if (i == 4)
+                                    if(i == 6)
                                     {
-                                        DataGridViewComboBoxCell cb = (DataGridViewComboBoxCell)dg.Rows[index].Cells[i];
-                                        cb.DataSource = CarregarListaPrecos();
-                                        cb.ValueMember = "Id";
-                                        cb.DisplayMember = "Nome";
+                                        dg.Rows[index].Cells[i].Value = precoProduto / quantidadeProduto * Convert.ToInt32(row.ItemArray[5]);
                                     }
-
-                                    if (i == 3)
+                                    else
                                     {
-                                        if (dg.Rows[index].Cells[i] != null)
-                                        {
-                                            total += Convert.ToDecimal(dg.Rows[index].Cells[i]);
-                                        }
+                                        dg.Rows[index].Cells[i].Value = row[i];
                                     }
+                                    
+                                   // dg.Rows[i].Cells[6].Value = precoProduto / quantidadeProduto * Convert.ToInt32(row.ItemArray[5]);
                                 }
+
+                                //dg.Rows[0].Cells[6].Value =  ;
+                                //row.ItemArray[6] = precoProduto / quantidadeProduto * Convert.ToInt32(row.ItemArray[5]);
+
+                                //for (int i = 0; i < dataTable.Columns.Count; i++)
+                                //{
+                                //    dg.Rows[row.ItemArray[3]].Cells[i].Value = row[i];
+                                //}
+
+                                // total += Convert.ToDecimal(fracao);
+                                //precoProduto / quantidadeProduto) * quantidadedesejada
+
+                                ////Fração do preco
+                                //var valorPreco = dg.CurrentRow.Cells[4].Value;
+                                //double preco = 0;
+                                //if (valorPreco != null)
+                                //{
+                                //    double precoProduto = PesquisarPreco(idpreco);
+                                //    int quantidadeProduto = PesquisarQuantidade(idpreco);
+                                //    if (precoProduto > 0)
+                                //    {
+                                //        preco = (precoProduto / quantidadeProduto) * quantidade;
+                                //    }
+                                //}
+
+                                // Itere pelas colunas e popule as células do DataGridView
+                                //for (int i = 0; i < dataTable.Columns.Count; i++)
+                                //{
+                                //    dg.Rows[index].Cells[i].Value = row[i];
+
+                                //    //if (i == 4)
+                                //    //{
+                                //    //    DataGridViewComboBoxCell cb = (DataGridViewComboBoxCell)dg.Rows[index].Cells[i];
+                                //    //    cb.DataSource = CarregarListaPrecos();
+                                //    //    cb.ValueMember = "Id";
+                                //    //    cb.DisplayMember = "Nome";
+                                //    //}
+
+                                //    if (i == 4)
+                                //    {
+                                //        if (dg.Rows[index].Cells[i].Value != null)
+                                //        {
+                                //            total += Convert.ToDecimal(dg.Rows[index].Cells[i].Value);
+                                //        }
+                                //    }
+                                //}
                             }
 
-                            //adicione uma nova linha ao DataTable com o valor do somatório.
-                            DataTable dt = (DataTable)dg.DataSource;
-                            DataRow totalRow = dt.NewRow();
-                            totalRow["Total"] = total;
-                            dt.Rows.Add(totalRow);
+                            lblTotal.Text = total.ToString("0.00");
 
-                            dg.DataSource = dt;
+                            // int index = dg.Rows.Add();
+
+
+                            //adicione uma nova linha ao DataTable com o valor do somatório.
+                            //DataTable dt = (DataTable)dg.DataSource;
+                            
+                            //DataRow totalRow = dataTable.NewRow();
+                            ////totalRow["Total"] = total;
+                            //dataTable.Rows.Add(totalRow);
+
+                            //dg.DataSource = dataTable;
                         }
                     }
                 }
@@ -244,7 +306,7 @@ namespace GifConfeitaria
                 }
             }
 
-            int idproduto = Convert.ToInt32(txtIdProduto.Text);
+            int idproduto = Convert.ToInt32(lblIdProduto.Text);
 
             Gravar(id, idpreco, idproduto, medida.ToString(), quantidade, preco,0);
         }
@@ -280,7 +342,6 @@ namespace GifConfeitaria
             double valorPreco = 0;
             try
             {
-
                 using (SqlConnection connection = new(connectionString))
                 {
                     string query = "SELECT [Preco] FROM [confeitaria].[dbo].[Precos] WHERE Id = @Id";
@@ -304,6 +365,7 @@ namespace GifConfeitaria
 
         private void FrmOrcamentos_Load(object sender, EventArgs e)
         {
+            lblIdProduto.Visible = false;
             CarregarComboBoxProdutos();
         }
 
@@ -378,17 +440,17 @@ namespace GifConfeitaria
             ComboBox cmb = (ComboBox)sender;
             if (cmb.SelectedValue is int selectedValue)
             {
-                txtIdProduto.Text = selectedValue.ToString();
+                lblIdProduto.Text = selectedValue.ToString();
                 Listar(selectedValue);
             }
         }
 
         private void dg_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)
         {
-            if (e.RowIndex == dg.Rows.Count - 1)
-            {
-                dg.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.LightGray;
-            }
+            //if (e.RowIndex == dg.Rows.Count - 1)
+            //{
+            //    dg.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.LightGray;
+            //}
         }
     }
 }
