@@ -27,14 +27,16 @@ namespace GifConfeitaria
             colunaID.DataPropertyName = "Id";
             colunaID.HeaderText = "Registro";
             dg.Columns.Add(colunaID);
-            dg.Columns[0].Width = 100;
+            //dg.Columns[0].Width = 100;
+            dg.Columns[0].Visible = false;
 
             // Adicionar colunas à grade
             DataGridViewTextBoxColumn colunaIDPreco = new();
             colunaIDPreco.DataPropertyName = "IdPreco";
             colunaIDPreco.HeaderText = "IdPreco";
             dg.Columns.Add(colunaIDPreco);
-            dg.Columns[1].Width = 100;
+            //dg.Columns[1].Width = 100;
+            dg.Columns[1].Visible = false;
 
             DataGridViewTextBoxColumn colunaNome = new();
             colunaNome.DataPropertyName = "Nome";
@@ -44,7 +46,8 @@ namespace GifConfeitaria
 
             DataGridViewTextBoxColumn colunaPreco = new();
             colunaPreco.DataPropertyName = "Preco";
-            colunaPreco.HeaderText = "Preco";
+            colunaPreco.HeaderText = "Preço";
+            colunaPreco.DefaultCellStyle.Format = "00.00";
             dg.Columns.Add(colunaPreco);
             dg.Columns[3].Width = 100;
 
