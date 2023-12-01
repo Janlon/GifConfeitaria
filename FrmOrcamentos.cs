@@ -1,12 +1,13 @@
 ﻿using System.Data;
 using System.Data.SqlClient;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
 
 namespace GifConfeitaria
 {
     public partial class FrmOrcamentos : Form
     {
         private readonly BindingSource bindingSource1 = [];
-        private SqlDataAdapter dataAdapter = new();
+        private readonly SqlDataAdapter dataAdapter = new();
         readonly string connectionString = "Data Source=.; Initial Catalog=confeitaria; User Id=sa; Password=Senha@123;";
 
         public FrmOrcamentos()
@@ -27,7 +28,7 @@ namespace GifConfeitaria
             colunaID.DataPropertyName = "Id";
             colunaID.HeaderText = "Registro";
             dg.Columns.Add(colunaID);
-            //dg.Columns[0].Width = 100;
+            dg.Columns[0].Width = 100;
             dg.Columns[0].Visible = false;
 
             // Adicionar colunas à grade
@@ -35,15 +36,16 @@ namespace GifConfeitaria
             colunaIDPreco.DataPropertyName = "IdPreco";
             colunaIDPreco.HeaderText = "IdPreco";
             dg.Columns.Add(colunaIDPreco);
-            //dg.Columns[1].Width = 100;
+            dg.Columns[1].Width = 100;
             dg.Columns[1].Visible = false;
 
             DataGridViewComboBoxColumn colunaNome = new();
             colunaNome.DataPropertyName = "Nome";
             colunaNome.HeaderText = "Produto";
+            colunaNome.ValueMember = "Nome";
+            colunaNome.DataSource = CarregarListaPrecos();
             dg.Columns.Add(colunaNome);
             dg.Columns[2].Width = 200;
-           // foreach (var row in CarregarListaPrecos()) { }
 
             DataGridViewTextBoxColumn colunaPreco = new();
             colunaPreco.DataPropertyName = "Preco";
@@ -52,16 +54,15 @@ namespace GifConfeitaria
             dg.Columns.Add(colunaPreco);
             dg.Columns[3].Width = 100;
 
-            //DataGridViewComboBoxColumn colunaMedida = new();
-            DataGridViewTextBoxColumn colunaMedida = new();
+            DataGridViewComboBoxColumn colunaMedida = new();
             colunaMedida.DataPropertyName = "Medida";
             colunaMedida.HeaderText = "Medida";
             // Adicione os itens ao ComboBox
-            //colunaMedida.Items.Add("KG");
-            //colunaMedida.Items.Add("GR");
-            //colunaMedida.Items.Add("LT");
-            //colunaMedida.Items.Add("CX");
-            //colunaMedida.Items.Add("UN");
+            colunaMedida.Items.Add("KG");
+            colunaMedida.Items.Add("GR");
+            colunaMedida.Items.Add("LT");
+            colunaMedida.Items.Add("CX");
+            colunaMedida.Items.Add("UN");
             dg.Columns.Add(colunaMedida);
             dg.Columns[4].Width = 100;
 
@@ -99,21 +100,14 @@ namespace GifConfeitaria
 
                     using (SqlCommand command = new(query, connection))
                     {
-                        // Crie um adaptador de dados
                         using (SqlDataAdapter adapter = new(command))
                         {
-                            // Crie um DataTable para armazenar os dados
-                            DataTable dataTable = new DataTable();
-
-                            // Preencha o DataTable com os dados do banco de dados
+                            DataTable dataTable = new();
                             adapter.Fill(dataTable);
                             double total = 0;
 
-                           // dg.DataSource = dataTable;
-
                             foreach (DataRow row in dataTable.Rows)
                             {
-                                // Adicione uma nova linha ao DataGridView
                                 int index = dg.Rows.Add();
 
                                 double precoProduto = PesquisarPreco(Convert.ToInt32(row.ItemArray[1]));
@@ -167,10 +161,12 @@ namespace GifConfeitaria
                 {
                     Incluir(idPreco, idProduto, medida, quantidade, preco, total);
                 }
+
+                //BeginInvoke(new MethodInvoker(Listar));
             }
             catch (Exception ex)
             {
-                ex.Message.ToString();
+                MessageBox.Show(ex.Message);
             }
         }
 
@@ -215,53 +211,65 @@ namespace GifConfeitaria
 
         private void dg_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
-            if (dg.CurrentRow == null) return;
-
-            //Id
-            var valorId = dg.CurrentRow.Cells[0].Value;
-            int id = 0;
-            if (valorId != null)
+            try
             {
-                id = Convert.ToInt32(valorId);
-            }
+                if (dg.CurrentRow == null) return;
 
-            //Tabela Precos (Nome)
-            var valorPrecoId = dg.CurrentRow.Cells[1].Value.ToString();
-            int idpreco = 0;
-            if (valorPrecoId != string.Empty)
-            {
-                idpreco = Convert.ToInt32(valorPrecoId);
-            }
-
-            //Medida
-            var medida = dg.CurrentRow.Cells[2].Value;
-            medida ??= "KG";
-
-            //Quantidade
-            var valorQuantidade = dg.CurrentRow.Cells[3].Value;
-            int quantidade = 0;
-            valorQuantidade ??= 0;
-            if (valorQuantidade != null)
-            {
-                quantidade = Convert.ToInt32(valorQuantidade);
-            }
-
-            //Fração do preco
-            var valorPreco = dg.CurrentRow.Cells[4].Value;
-            double preco = 0;
-            if (valorPreco != null)
-            {
-                double precoProduto = PesquisarPreco(idpreco);
-                int quantidadeProduto = PesquisarQuantidade(idpreco);
-                if (precoProduto > 0)
+                //Id
+                var valorId = dg.CurrentRow.Cells[0].Value;
+                int id = 0;
+                if (valorId != null)
                 {
-                    preco = (precoProduto / quantidadeProduto) * quantidade;
+                    id = Convert.ToInt32(valorId);
                 }
+
+                //Tabela Precos (Nome)
+                var valorPrecoId = dg.CurrentRow.Cells[1].Value;
+                int idpreco = 0;
+                if (valorPrecoId != null)
+                {
+                    idpreco = Convert.ToInt32(valorPrecoId);
+                }
+                else
+                {
+                    return;
+                }
+
+                //Medida
+                var medida = dg.CurrentRow.Cells[2].Value;
+                medida ??= "KG";
+
+                //Quantidade
+                var valorQuantidade = dg.CurrentRow.Cells[3].Value;
+                int quantidade = 0;
+                valorQuantidade ??= 0;
+                if (valorQuantidade != null)
+                {
+                    quantidade = Convert.ToInt32(valorQuantidade);
+                }
+
+                //Fração do preco
+                var valorPreco = dg.CurrentRow.Cells[4].Value;
+                double preco = 0;
+                if (valorPreco != null)
+                {
+                    double precoProduto = PesquisarPreco(idpreco);
+                    int quantidadeProduto = PesquisarQuantidade(idpreco);
+                    if (precoProduto > 0)
+                    {
+                        preco = (precoProduto / quantidadeProduto) * quantidade;
+                    }
+                }
+
+                int idproduto = Convert.ToInt32(lblIdProduto.Text);
+
+                Gravar(id, idpreco, idproduto, medida.ToString(), quantidade, preco, 0);
             }
-
-            int idproduto = Convert.ToInt32(lblIdProduto.Text);
-
-            Gravar(id, idpreco, idproduto, medida.ToString(), quantidade, preco,0);
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+   
         }
 
         private int PesquisarQuantidade(int id)
@@ -306,7 +314,6 @@ namespace GifConfeitaria
 
                     return valorPreco;
                 }
-
             }
             catch (SqlException ex)
             {
@@ -333,18 +340,15 @@ namespace GifConfeitaria
 
                     using (SqlCommand command = new(query, connection))
                     {
-                        // Crie um adaptador de dados
-                        using (SqlDataAdapter adapter = new SqlDataAdapter(command))
+                        using (SqlDataAdapter adapter = new (command))
                         {
-                            // Crie um DataTable para armazenar os dados
-                            DataTable dataTable = new DataTable();
+                            DataTable dataTable = new ();
 
-                            // Preencha o DataTable com os dados do banco de dados
                             adapter.Fill(dataTable);
 
-                            comboBox1.DataSource = dataTable;
-                            comboBox1.DisplayMember = "Nome";
-                            comboBox1.ValueMember = "Id";
+                            cboProdutos.DataSource = dataTable;
+                            cboProdutos.DisplayMember = "Nome";
+                            cboProdutos.ValueMember = "Id";
                         }
                     }
                 }
@@ -366,13 +370,9 @@ namespace GifConfeitaria
 
                     using (SqlCommand command = new(query, connection))
                     {
-                        // Crie um adaptador de dados
                         using (SqlDataAdapter adapter = new(command))
                         {
-                            // Crie um DataTable para armazenar os dados
                             DataTable dataTable = new();
-
-                            // Preencha o DataTable com os dados do banco de dados
                             adapter.Fill(dataTable);
 
                             return dataTable;
@@ -388,22 +388,15 @@ namespace GifConfeitaria
             return new DataTable();
         }
 
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        private void cboProdutos_SelectedIndexChanged(object sender, EventArgs e)
         {
             ComboBox cmb = (ComboBox)sender;
             if (cmb.SelectedValue is int selectedValue)
             {
                 lblIdProduto.Text = selectedValue.ToString();
-                Listar(selectedValue);
+               // Listar(selectedValue);
             }
         }
 
-        private void dg_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)
-        {
-            //if (e.RowIndex == dg.Rows.Count - 1)
-            //{
-            //    dg.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.LightGray;
-            //}
-        }
     }
 }

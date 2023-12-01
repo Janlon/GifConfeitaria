@@ -40,8 +40,10 @@
             dg.Dock = DockStyle.Fill;
             dg.Location = new Point(0, 0);
             dg.Margin = new Padding(5, 6, 5, 6);
+            dg.MultiSelect = false;
             dg.Name = "dg";
             dg.RowHeadersWidth = 51;
+            dg.SelectionMode = DataGridViewSelectionMode.CellSelect;
             dg.Size = new Size(472, 226);
             dg.TabIndex = 0;
             dg.CellEndEdit += dg_CellEndEdit;

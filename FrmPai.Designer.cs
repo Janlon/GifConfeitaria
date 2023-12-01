@@ -48,7 +48,7 @@ namespace GifConfeitaria
             PainelPai.Dock = DockStyle.Fill;
             PainelPai.Location = new Point(0, 0);
             PainelPai.Name = "PainelPai";
-            PainelPai.Size = new Size(722, 414);
+            PainelPai.Size = new Size(847, 483);
             PainelPai.TabIndex = 11;
             // 
             // btnOrcamentos
@@ -58,7 +58,7 @@ namespace GifConfeitaria
             btnOrcamentos.ForeColor = Color.FromArgb(192, 0, 192);
             btnOrcamentos.Image = Properties.Resources._2138186_baker_bakery_cupcake_dessert_food_icon;
             btnOrcamentos.ImageAlign = ContentAlignment.MiddleLeft;
-            btnOrcamentos.Location = new Point(469, 150);
+            btnOrcamentos.Location = new Point(529, 201);
             btnOrcamentos.Name = "btnOrcamentos";
             btnOrcamentos.Size = new Size(199, 80);
             btnOrcamentos.TabIndex = 13;
@@ -74,7 +74,7 @@ namespace GifConfeitaria
             btnProdutos.ForeColor = Color.Green;
             btnProdutos.Image = Properties.Resources._2138186_baker_bakery_cupcake_dessert_food_icon;
             btnProdutos.ImageAlign = ContentAlignment.MiddleLeft;
-            btnProdutos.Location = new Point(265, 150);
+            btnProdutos.Location = new Point(325, 201);
             btnProdutos.Name = "btnProdutos";
             btnProdutos.Size = new Size(199, 80);
             btnProdutos.TabIndex = 12;
@@ -90,7 +90,7 @@ namespace GifConfeitaria
             btnPrecos.ForeColor = Color.White;
             btnPrecos.Image = Properties.Resources._2138186_baker_bakery_cupcake_dessert_food_icon;
             btnPrecos.ImageAlign = ContentAlignment.MiddleLeft;
-            btnPrecos.Location = new Point(61, 150);
+            btnPrecos.Location = new Point(121, 201);
             btnPrecos.Name = "btnPrecos";
             btnPrecos.Size = new Size(199, 80);
             btnPrecos.TabIndex = 11;
@@ -106,7 +106,7 @@ namespace GifConfeitaria
             pictureBox1.Location = new Point(0, 0);
             pictureBox1.Margin = new Padding(3, 2, 3, 2);
             pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(722, 414);
+            pictureBox1.Size = new Size(847, 483);
             pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
             pictureBox1.TabIndex = 10;
             pictureBox1.TabStop = false;
@@ -116,7 +116,7 @@ namespace GifConfeitaria
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.Control;
-            ClientSize = new Size(722, 414);
+            ClientSize = new Size(847, 483);
             Controls.Add(PainelPai);
             FormBorderStyle = FormBorderStyle.FixedSingle;
             Icon = (Icon)resources.GetObject("$this.Icon");

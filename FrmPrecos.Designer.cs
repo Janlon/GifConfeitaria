@@ -40,17 +40,20 @@
             dg.Dock = DockStyle.Fill;
             dg.Location = new Point(0, 0);
             dg.Margin = new Padding(5, 6, 5, 6);
+            dg.MultiSelect = false;
             dg.Name = "dg";
             dg.RowHeadersWidth = 51;
-            dg.Size = new Size(519, 255);
+            dg.SelectionMode = DataGridViewSelectionMode.CellSelect;
+            dg.Size = new Size(473, 227);
             dg.TabIndex = 1;
             dg.CellEndEdit += dg_CellEndEdit;
+            dg.KeyDown += dg_KeyDown;
             // 
             // FrmPrecos
             // 
             AutoScaleDimensions = new SizeF(11F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(519, 255);
+            ClientSize = new Size(473, 227);
             Controls.Add(dg);
             Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             Icon = (Icon)resources.GetObject("$this.Icon");

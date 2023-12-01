@@ -1,13 +1,12 @@
 ﻿using System.Data;
 using System.Data.SqlClient;
-using System.Globalization;
 
 namespace GifConfeitaria
 {
     public partial class FrmPrecos : Form
     {
         private readonly BindingSource bindingSource1 = [];
-        private SqlDataAdapter dataAdapter = new();
+        private readonly SqlDataAdapter dataAdapter = new();
         readonly string connectionString = "Data Source=.; Initial Catalog=confeitaria; User Id=sa; Password=Senha@123;";
 
         public FrmPrecos()
@@ -31,12 +30,14 @@ namespace GifConfeitaria
             colunaID.HeaderText = "Registro";
             dg.Columns.Add(colunaID);
             dg.Columns[0].Width = 100;
+            dg.Columns[0].Visible = false;
 
             DataGridViewTextBoxColumn colunaNome = new();
             colunaNome.DataPropertyName = "Nome"; // Nome da propriedade no seu objeto de dados
             colunaNome.HeaderText = "Nome";
+            colunaNome.SortMode = DataGridViewColumnSortMode.Automatic;
             dg.Columns.Add(colunaNome);
-            dg.Columns[1].Width = 300;
+            dg.Columns[1].Width = 350;
 
             DataGridViewComboBoxColumn colunaMedida = new();
             colunaMedida.DataPropertyName = "Medida";
@@ -53,6 +54,7 @@ namespace GifConfeitaria
             DataGridViewTextBoxColumn colunaQuantidade = new();
             colunaQuantidade.DataPropertyName = "Quantidade";
             colunaQuantidade.HeaderText = "Qtd";
+            colunaQuantidade.SortMode = DataGridViewColumnSortMode.Automatic;
             dg.Columns.Add(colunaQuantidade);
             dg.Columns[3].Width = 100;
 
@@ -60,6 +62,7 @@ namespace GifConfeitaria
             colunaPreco.DataPropertyName = "Preco";
             colunaPreco.HeaderText = "Preco";
             colunaPreco.DefaultCellStyle.Format = "00.00";
+            colunaPreco.SortMode = DataGridViewColumnSortMode.Automatic;
             dg.Columns.Add(colunaPreco);
             dg.Columns[4].Width = 160;
 
@@ -82,28 +85,14 @@ namespace GifConfeitaria
                     string query = "SELECT [Id],[Nome],[Medida],[Quantidade],[Preco] FROM [confeitaria].[dbo].[Precos]";
                     connection.Open();
 
-                    using (SqlCommand command = new SqlCommand(query, connection))
+                    using (SqlCommand command = new(query, connection))
                     {
-                        // Crie um adaptador de dados
-                        using (SqlDataAdapter adapter = new SqlDataAdapter(command))
+                        using (SqlDataAdapter adapter = new(command))
                         {
-                            // Crie um DataTable para armazenar os dados
-                            DataTable dataTable = new DataTable();
-
-                            // Preencha o DataTable com os dados do banco de dados
+                            DataTable dataTable = new();
                             adapter.Fill(dataTable);
 
-                            foreach (DataRow row in dataTable.Rows)
-                            {
-                                // Adicione uma nova linha ao DataGridView
-                                int index = dg.Rows.Add();
-
-                                // Itere pelas colunas e popule as células do DataGridView
-                                for (int i = 0; i < dataTable.Columns.Count; i++)
-                                {
-                                    dg.Rows[index].Cells[i].Value = row[i];
-                                }
-                            }
+                            dg.DataSource = dataTable;
                         }
                     }
                 }
@@ -114,7 +103,7 @@ namespace GifConfeitaria
             }
         }
 
-        private void Gravar(int id, string? nome, string medida, int quantidade, double preco)
+        private void Gravar(int id, string? nome, string medida, int quantidade, decimal preco)
         {
             try
             {
@@ -128,15 +117,16 @@ namespace GifConfeitaria
                 {
                     Incluir(nome, medida, quantidade, preco);
                 }
-                Listar();
+
+               // BeginInvoke(new MethodInvoker(Listar));
             }
             catch (Exception ex)
             {
-                ex.Message.ToString();
+                MessageBox.Show(ex.Message);
             }
         }
 
-        private void Incluir(string nome, string medida, int quantidade, double preco)
+        private void Incluir(string nome, string medida, int quantidade, decimal preco)
         {
             using (SqlConnection connection = new(connectionString))
             {
@@ -153,12 +143,7 @@ namespace GifConfeitaria
             }
         }
 
-        private void Excluir(int id)
-        {
-
-        }
-
-        private void Alterar(int id, string nome, string medida, int quantidade, double preco)
+        private void Alterar(int id, string nome, string medida, int quantidade, decimal preco)
         {
             using (SqlConnection connection = new(connectionString))
             {
@@ -180,50 +165,82 @@ namespace GifConfeitaria
         {
             if (dg.CurrentRow == null) return;
 
+            //id
             var valorId = dg.CurrentRow.Cells[0].Value;
             int id = 0;
-            if (valorId != null)
+            if (valorId is int)
             {
                 id = Convert.ToInt32(valorId);
             }
 
+            //nome
             var nome = dg.CurrentRow.Cells[1].Value;
             if (nome == null)
             {
                 return;
             }
 
-            var medida = dg.CurrentRow.Cells[2].Value;
-            if (medida == null) 
+            //medida
+            var medida = dg.CurrentRow.Cells[2].Value.ToString();
+            if (medida == string.Empty)
             {
                 medida = "KG";
             }
 
+            //Quantidade
             var valorQuantidade = dg.CurrentRow.Cells[3].Value;
             int quantidade = 0;
-            if(valorQuantidade == null)
-            {
-                valorQuantidade = string.Empty;
-            }
-            if (valorQuantidade != string.Empty)
+            if (valorQuantidade is int)
             {
                 quantidade = Convert.ToInt32(valorQuantidade);
             }
 
-            var valorpreco = dg.CurrentRow.Cells[4].Value.ToString();
-            double preco = 0;
-            if (valorpreco != string.Empty)
+            //Fração do preco
+            var valorPreco = dg.CurrentRow.Cells[4].Value;
+            decimal preco = 0;
+            if (valorPreco is decimal)
             {
-                preco = Convert.ToDouble(valorpreco);
+                preco = Convert.ToDecimal(valorPreco);
             }
 
             Gravar(id, nome.ToString().Trim().ToUpper(), medida.ToString().Trim().ToUpper(), quantidade, preco);
+        }
+
+        private void dg_KeyDown(object sender, KeyEventArgs e)
+        {
+            try
+            {
+                if (e.KeyCode == Keys.Delete)
+                {
+                    if (dg.CurrentRow == null) return;
+
+                    int rowIndex = dg.CurrentRow.Index;
+                    int id = Convert.ToInt32(dg.CurrentRow.Cells[0].Value);
+                    DataTable dt = (DataTable)dg.DataSource;
+                    dt.Rows.RemoveAt(rowIndex);
+                    dg.DataSource = dt;
+
+                    // Exclua o registro do banco de dados (substitua "SuaTabela" pelo nome da sua tabela e "ID" pelo nome da sua coluna de chave primária)
+                    using (SqlConnection connection = new SqlConnection(connectionString))
+                    {
+                        connection.Open();
+                        using (SqlCommand command = new SqlCommand("DELETE FROM PRECOS WHERE ID = @ID", connection))
+                        {
+                            command.Parameters.AddWithValue("@ID", id);
+                            command.ExecuteNonQuery();
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void FrmPrecos_Load(object sender, EventArgs e)
         {
             Listar();
         }
-
     }
 }

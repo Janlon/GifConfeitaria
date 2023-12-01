@@ -29,110 +29,89 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmOrcamentos));
-            comboBox1 = new ComboBox();
-            tableLayoutPanel1 = new TableLayoutPanel();
+            splitContainer1 = new SplitContainer();
             dg = new DataGridView();
             lblTotal = new Label();
+            cboProdutos = new ComboBox();
             lblIdProduto = new Label();
-            lblQtdPreco = new Label();
-            lblPreco = new Label();
-            tableLayoutPanel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
+            splitContainer1.Panel1.SuspendLayout();
+            splitContainer1.Panel2.SuspendLayout();
+            splitContainer1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dg).BeginInit();
             SuspendLayout();
             // 
-            // comboBox1
+            // splitContainer1
             // 
-            comboBox1.Dock = DockStyle.Fill;
-            comboBox1.FormattingEnabled = true;
-            comboBox1.Location = new Point(3, 3);
-            comboBox1.Name = "comboBox1";
-            comboBox1.Size = new Size(668, 39);
-            comboBox1.TabIndex = 2;
-            comboBox1.SelectedIndexChanged += comboBox1_SelectedIndexChanged;
+            splitContainer1.Dock = DockStyle.Fill;
+            splitContainer1.Location = new Point(0, 0);
+            splitContainer1.Name = "splitContainer1";
             // 
-            // tableLayoutPanel1
+            // splitContainer1.Panel1
             // 
-            tableLayoutPanel1.ColumnCount = 1;
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tableLayoutPanel1.Controls.Add(dg, 0, 1);
-            tableLayoutPanel1.Controls.Add(comboBox1, 0, 0);
-            tableLayoutPanel1.Controls.Add(lblTotal, 0, 2);
-            tableLayoutPanel1.Controls.Add(lblIdProduto, 0, 3);
-            tableLayoutPanel1.Controls.Add(lblQtdPreco, 0, 4);
-            tableLayoutPanel1.Controls.Add(lblPreco, 0, 5);
-            tableLayoutPanel1.Dock = DockStyle.Fill;
-            tableLayoutPanel1.Location = new Point(0, 0);
-            tableLayoutPanel1.Name = "tableLayoutPanel1";
-            tableLayoutPanel1.RowCount = 6;
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 13.4670486F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 86.53295F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 37F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tableLayoutPanel1.Size = new Size(674, 350);
-            tableLayoutPanel1.TabIndex = 0;
+            splitContainer1.Panel1.Controls.Add(dg);
+            // 
+            // splitContainer1.Panel2
+            // 
+            splitContainer1.Panel2.Controls.Add(cboProdutos);
+            splitContainer1.Panel2.Controls.Add(lblIdProduto);
+            splitContainer1.Panel2.Controls.Add(lblTotal);
+            splitContainer1.Size = new Size(689, 384);
+            splitContainer1.SplitterDistance = 525;
+            splitContainer1.TabIndex = 0;
             // 
             // dg
             // 
             dg.AllowUserToOrderColumns = true;
             dg.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dg.Dock = DockStyle.Fill;
-            dg.Location = new Point(5, 39);
-            dg.Margin = new Padding(5);
+            dg.Location = new Point(0, 0);
             dg.Name = "dg";
-            dg.RowHeadersWidth = 51;
-            dg.Size = new Size(664, 208);
-            dg.TabIndex = 1;
+            dg.Size = new Size(525, 384);
+            dg.TabIndex = 12;
             dg.CellEndEdit += dg_CellEndEdit;
-            dg.RowPrePaint += dg_RowPrePaint;
             // 
             // lblTotal
             // 
-            lblTotal.AutoSize = true;
-            lblTotal.Font = new Font("Segoe UI", 16.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblTotal.BackColor = Color.Transparent;
+            lblTotal.BorderStyle = BorderStyle.FixedSingle;
+            lblTotal.Dock = DockStyle.Bottom;
+            lblTotal.Font = new Font("Segoe UI", 17.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
             lblTotal.ForeColor = Color.DeepPink;
             lblTotal.ImageAlign = ContentAlignment.MiddleRight;
-            lblTotal.Location = new Point(3, 252);
+            lblTotal.Location = new Point(0, 343);
             lblTotal.Name = "lblTotal";
-            lblTotal.Size = new Size(108, 37);
-            lblTotal.TabIndex = 3;
+            lblTotal.Size = new Size(160, 41);
+            lblTotal.TabIndex = 13;
             lblTotal.Text = "R$ 0.00";
-            lblTotal.TextAlign = ContentAlignment.MiddleRight;
+            lblTotal.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // cboProdutos
+            // 
+            cboProdutos.Dock = DockStyle.Top;
+            cboProdutos.DropDownStyle = ComboBoxStyle.DropDownList;
+            cboProdutos.FormattingEnabled = true;
+            cboProdutos.Location = new Point(0, 0);
+            cboProdutos.Name = "cboProdutos";
+            cboProdutos.Size = new Size(160, 33);
+            cboProdutos.TabIndex = 11;
+            cboProdutos.SelectedIndexChanged += cboProdutos_SelectedIndexChanged;
             // 
             // lblIdProduto
             // 
             lblIdProduto.AutoSize = true;
-            lblIdProduto.Location = new Point(3, 289);
+            lblIdProduto.Location = new Point(15, 248);
             lblIdProduto.Name = "lblIdProduto";
-            lblIdProduto.Size = new Size(142, 20);
-            lblIdProduto.TabIndex = 4;
+            lblIdProduto.Size = new Size(117, 25);
+            lblIdProduto.TabIndex = 10;
             lblIdProduto.Text = "lblIdProduto";
-            // 
-            // lblQtdPreco
-            // 
-            lblQtdPreco.AutoSize = true;
-            lblQtdPreco.Location = new Point(3, 309);
-            lblQtdPreco.Name = "lblQtdPreco";
-            lblQtdPreco.Size = new Size(136, 20);
-            lblQtdPreco.TabIndex = 5;
-            lblQtdPreco.Text = "lblQtdPreco";
-            // 
-            // lblPreco
-            // 
-            lblPreco.AutoSize = true;
-            lblPreco.Location = new Point(3, 329);
-            lblPreco.Name = "lblPreco";
-            lblPreco.Size = new Size(97, 21);
-            lblPreco.TabIndex = 6;
-            lblPreco.Text = "lblPreco";
             // 
             // FrmOrcamentos
             // 
-            AutoScaleDimensions = new SizeF(13F, 31F);
+            AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(674, 350);
-            Controls.Add(tableLayoutPanel1);
+            ClientSize = new Size(689, 384);
+            Controls.Add(splitContainer1);
             Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
             Icon = (Icon)resources.GetObject("$this.Icon");
             Margin = new Padding(5);
@@ -141,19 +120,21 @@
             Name = "FrmOrcamentos";
             Text = "Meus Gastos - Custos do Produto";
             Load += FrmOrcamentos_Load;
-            tableLayoutPanel1.ResumeLayout(false);
-            tableLayoutPanel1.PerformLayout();
+            splitContainer1.Panel1.ResumeLayout(false);
+            splitContainer1.Panel2.ResumeLayout(false);
+            splitContainer1.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
+            splitContainer1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dg).EndInit();
             ResumeLayout(false);
         }
 
         #endregion
-        private ComboBox comboBox1;
-        private TableLayoutPanel tableLayoutPanel1;
+
+        private SplitContainer splitContainer1;
         private DataGridView dg;
-        private Label lblTotal;
+        private ComboBox cboProdutos;
         private Label lblIdProduto;
-        private Label lblQtdPreco;
-        private Label lblPreco;
+        private Label lblTotal;
     }
 }

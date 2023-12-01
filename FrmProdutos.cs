@@ -1,6 +1,5 @@
 ﻿using System.Data;
 using System.Data.SqlClient;
-using System.Windows.Forms;
 
 namespace GifConfeitaria
 {
@@ -24,19 +23,18 @@ namespace GifConfeitaria
             dg.AutoGenerateColumns = false;
 
             // Adicionar colunas à grade
-            DataGridViewTextBoxColumn colunaID = new DataGridViewTextBoxColumn();
+            DataGridViewTextBoxColumn colunaID = new();
             colunaID.DataPropertyName = "Id"; // Nome da propriedade no seu objeto de dados
             colunaID.HeaderText = "Registro";
-            colunaID.SortMode = DataGridViewColumnSortMode.Automatic;
             dg.Columns.Add(colunaID);
-            dg.Columns[0].Width = 100;
+            dg.Columns[0].Visible = false;
 
-            DataGridViewTextBoxColumn colunaNome = new DataGridViewTextBoxColumn();
+            DataGridViewTextBoxColumn colunaNome = new ();
             colunaNome.DataPropertyName = "Nome"; // Nome da propriedade no seu objeto de dados
             colunaNome.HeaderText = "Nome";
             colunaNome.SortMode = DataGridViewColumnSortMode.Automatic;
             dg.Columns.Add(colunaNome);
-            dg.Columns[1].Width = 650;
+            dg.Columns[1].Width = 700;
 
             // Configurar o estilo escuro
             dg.BackgroundColor = Color.FromArgb(45, 45, 48);
@@ -57,28 +55,14 @@ namespace GifConfeitaria
                     string query = "SELECT [Id],[Nome] FROM [confeitaria].[dbo].[Produtos]";
                     connection.Open();
 
-                    using (SqlCommand command = new SqlCommand(query, connection))
+                    using (SqlCommand command = new(query, connection))
                     {
-                        // Crie um adaptador de dados
-                        using (SqlDataAdapter adapter = new SqlDataAdapter(command))
+                        using (SqlDataAdapter adapter = new(command))
                         {
-                            // Crie um DataTable para armazenar os dados
-                            DataTable dataTable = new DataTable();
-
-                            // Preencha o DataTable com os dados do banco de dados
+                            DataTable dataTable = new();
                             adapter.Fill(dataTable);
 
-                            foreach (DataRow row in dataTable.Rows)
-                            {
-                                // Adicione uma nova linha ao DataGridView
-                                int index = dg.Rows.Add();
-
-                                // Itere pelas colunas e popule as células do DataGridView
-                                for (int i = 0; i < dataTable.Columns.Count; i++)
-                                {
-                                    dg.Rows[index].Cells[i].Value = row[i];
-                                }
-                            }
+                             dg.DataSource = dataTable;
                         }
                     }
                 }
@@ -104,11 +88,12 @@ namespace GifConfeitaria
                 {
                     Incluir(nome.Trim().ToUpper());
                 }
-                //MessageBox.Show("Dados gravados com sucesso.", "Registro", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+               // BeginInvoke(new MethodInvoker(Listar));
             }
             catch (Exception ex)
             {
-                ex.Message.ToString();
+                MessageBox.Show(ex.Message);
             }
         }
 
@@ -154,7 +139,7 @@ namespace GifConfeitaria
 
                 var valorId = dg.CurrentRow.Cells[0].Value;
                 int id = 0;
-                if (valorId != null)
+                if (valorId is int)
                 {
                     id = Convert.ToInt32(valorId);
                 }
@@ -171,43 +156,36 @@ namespace GifConfeitaria
             {
                 MessageBox.Show(ex.Message);
             }
-
         }
 
         private void dg_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Delete)
+            try
             {
-                // Verifique se há pelo menos uma linha selecionada
-                if (dg.SelectedRows.Count > 0)
+                if (e.KeyCode == Keys.Delete)
                 {
-                    // Obtenha o índice da linha selecionada
-                    int rowIndex = dg.SelectedRows[0].Index;
+                    if (dg.CurrentRow == null) return;
 
-                    // Obtenha o valor da chave primária do registro a ser excluído (substitua "ID" pelo nome da sua coluna de chave primária)
-                    int id = Convert.ToInt32(dg.Rows[rowIndex].Cells["Id"].Value);
-
-                    // Obtenha o DataTable
+                    int rowIndex = dg.CurrentRow.Index;
+                    int id = Convert.ToInt32(dg.CurrentRow.Cells[0].Value);
                     DataTable dt = (DataTable)dg.DataSource;
-
-                    // Remova a linha do DataTable
                     dt.Rows.RemoveAt(rowIndex);
-
-                    // Atualize o DataGridView
                     dg.DataSource = dt;
 
-                    // Exclua o registro do banco de dados (substitua "SuaTabela" pelo nome da sua tabela e "ID" pelo nome da sua coluna de chave primária)
-                    using (SqlConnection connection = new SqlConnection(connectionString))
+                    using (SqlConnection connection = new(connectionString))
                     {
                         connection.Open();
-
-                        using (SqlCommand command = new SqlCommand("DELETE FROM PRODUTOS WHERE ID = @ID", connection))
+                        using (SqlCommand command = new("DELETE FROM PRODUTOS WHERE ID = @ID", connection))
                         {
                             command.Parameters.AddWithValue("@ID", id);
                             command.ExecuteNonQuery();
                         }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
             }
         }
     }
