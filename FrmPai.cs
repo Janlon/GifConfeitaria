@@ -9,7 +9,7 @@ namespace GifConfeitaria
         {
             InitializeComponent();
 
-            Abertura();
+            //Abertura();
         }
 
         private void Abertura()
@@ -17,7 +17,7 @@ namespace GifConfeitaria
             using (SpeechSynthesizer synth = new())
             {
                 synth.SetOutputToDefaultAudioDevice();
-                synth.Rate = 4;
+                synth.Rate = 3;
                 synth.Speak("Olá Giovanna!");
             }
         }
