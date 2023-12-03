@@ -8,8 +8,7 @@ namespace GifConfeitaria
         public FrmPai()
         {
             InitializeComponent();
-
-            //Abertura();
+            Abertura();
         }
 
         private void Abertura()

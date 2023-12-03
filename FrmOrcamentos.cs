@@ -1,8 +1,6 @@
-﻿using System;
-using System.Data;
+﻿using System.Data;
 using System.Data.SqlClient;
 using System.Windows.Forms;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
 
 namespace GifConfeitaria
 {
@@ -31,7 +29,7 @@ namespace GifConfeitaria
             colunaID.HeaderText = "Id";
             dg.Columns.Add(colunaID);
             dg.Columns[0].Width = 100;
-           // dg.Columns[0].Visible = false;
+            dg.Columns[0].Visible = false;
 
             // Adicionar colunas à grade
             DataGridViewTextBoxColumn colunaIDPreco = new();
@@ -39,15 +37,15 @@ namespace GifConfeitaria
             colunaIDPreco.HeaderText = "IdPreco";
             dg.Columns.Add(colunaIDPreco);
             dg.Columns[1].Width = 100;
-           // dg.Columns[1].Visible = false;
+            dg.Columns[1].Visible = false;
 
             DataGridViewComboBoxColumn colunaNome = new();
             colunaNome.DataPropertyName = "Nome";
-            colunaNome.HeaderText = "Produto";
+            colunaNome.HeaderText = "Produto, Recursos e Mão de Obra";
             colunaNome.ValueMember = "Nome";
             colunaNome.DataSource = CarregarListaPrecos();
             dg.Columns.Add(colunaNome);
-            dg.Columns[2].Width = 200;
+            dg.Columns[2].Width = 500;
             dg.EditingControlShowing += new DataGridViewEditingControlShowingEventHandler(dg_EditingControlShowing);
 
             DataGridViewTextBoxColumn colunaPreco = new();
@@ -56,33 +54,43 @@ namespace GifConfeitaria
             colunaPreco.DefaultCellStyle.Format = "00.00";
             dg.Columns.Add(colunaPreco);
             dg.Columns[3].ReadOnly = true;
+            dg.Columns[3].DefaultCellStyle.BackColor = Color.Gray;
             dg.Columns[3].Width = 100;
 
             DataGridViewComboBoxColumn colunaMedida = new();
             colunaMedida.DataPropertyName = "Medida";
             colunaMedida.HeaderText = "Medida";
-            // Adicione os itens ao ComboBox
-            colunaMedida.Items.Add("KG");
+            colunaMedida.Items.Add("HR");
             colunaMedida.Items.Add("GR");
-            colunaMedida.Items.Add("LT");
-            colunaMedida.Items.Add("CX");
+            colunaMedida.Items.Add("ML");
             colunaMedida.Items.Add("UN");
             dg.Columns.Add(colunaMedida);
+            dg.Columns[4].ReadOnly = true;
+            dg.Columns[4].DefaultCellStyle.BackColor = Color.Gray;
             dg.Columns[4].Width = 100;
 
             DataGridViewTextBoxColumn colunaQuantidade = new();
             colunaQuantidade.DataPropertyName = "Quantidade";
-            colunaQuantidade.HeaderText = "Qtd";
+            colunaQuantidade.HeaderText = "Quantidade";
             dg.Columns.Add(colunaQuantidade);
-            dg.Columns[5].Width = 100;
+            dg.Columns[5].ReadOnly = true;
+            dg.Columns[5].DefaultCellStyle.BackColor = Color.Gray;
+            dg.Columns[5].Width = 110;
+
+            DataGridViewTextBoxColumn colunaFracionada = new();
+            colunaFracionada.DataPropertyName = "Fracionada";
+            colunaFracionada.HeaderText = "Fracionada";
+            dg.Columns.Add(colunaFracionada);
+            dg.Columns[6].Width = 100;
            
             DataGridViewTextBoxColumn colunaFracao = new();
             colunaFracao.DataPropertyName = "Fracao";
             colunaFracao.HeaderText = "Fração";
             colunaFracao.DefaultCellStyle.Format = "00.00";
             dg.Columns.Add(colunaFracao);
-            dg.Columns[6].Width = 130;
-            dg.Columns[6].ReadOnly = true;
+            dg.Columns[7].Width = 130;
+            dg.Columns[7].DefaultCellStyle.BackColor = Color.Gray;
+            dg.Columns[7].ReadOnly = true;
 
             // Configurar o estilo escuro
             dg.BackgroundColor = Color.FromArgb(45, 45, 48);
@@ -106,23 +114,56 @@ namespace GifConfeitaria
         private void ComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             ComboBox cb = (ComboBox)sender;
-            if (cb.Text != null)
+            if (cb.Text != string.Empty)
             {
                 int precoId = PesquisarIdPrecoPeloNome(cb.Text);
-                dg.Rows[dg.CurrentRow.Index].Cells[1].Value = Convert.ToInt32(precoId);
-                dg.Rows[dg.CurrentRow.Index].Cells[3].Value = Convert.ToDecimal(PesquisarValorPrecoPeloId(Convert.ToInt32(precoId)));
+                if(precoId > 0)
+                {
+                    dg.Rows[dg.CurrentRow.Index].Cells[1].Value = precoId;
+                    dg.Rows[dg.CurrentRow.Index].Cells[3].Value = PesquisarValorPrecoPeloId(Convert.ToInt32(precoId));
+                    dg.Rows[dg.CurrentRow.Index].Cells[4].Value = PesquisarMedidaPrecoPeloId(precoId);
+                    dg.Rows[dg.CurrentRow.Index].Cells[5].Value = PesquisarQuantidadePrecoPeloId(precoId);
+                }
             }
         }
 
-        private void Listar(int id)
+        private string PesquisarMedidaPrecoPeloId(int Id)
+        {
+            string medidaPreco = string.Empty;
+            try
+            {
+                using (SqlConnection connection = new(connectionString))
+                {
+                    string query = "SELECT [Medida] FROM [confeitaria].[dbo].[Precos] WHERE Id = @Id";
+                    connection.Open();
+                    SqlCommand cmd = new(query, connection);
+                    cmd.Parameters.AddWithValue("@Id", Id);
+                    medidaPreco = Convert.ToString(cmd.ExecuteScalar());
+                    connection.Close();
+
+                    return medidaPreco;
+                }
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
+            return medidaPreco;
+        }
+
+        private void Listar()
         {
             try
             {
-                if (id == 0) return;
+
+                if (lblProdutoId.Text == string.Empty) return;
+
+                int id = Convert.ToInt32(lblProdutoId.Text);
 
                 using (SqlConnection connection = new(connectionString))
                 {
-                    string query = "SELECT [confeitaria].[dbo].[Orcamentos].[Id], [confeitaria].[dbo].[Precos].[Id] AS IdPreco, [confeitaria].[dbo].[Precos].[Nome],[confeitaria].[dbo].[Precos].[Preco],[confeitaria].[dbo].[Orcamentos].[Medida],[confeitaria].[dbo].[Orcamentos].[Quantidade],[confeitaria].[dbo].[Orcamentos].[Preco] AS Fracao FROM [confeitaria].[dbo].[Orcamentos] INNER JOIN [confeitaria].[dbo].Precos ON [PrecoId] = [confeitaria].[dbo].Precos.[Id] WHERE [ProdutoId] = " + id;
+                    string query = "SELECT [confeitaria].[dbo].[Orcamentos].[Id], [confeitaria].[dbo].[Precos].[Id] AS IdPreco, [confeitaria].[dbo].[Precos].[Nome],[confeitaria].[dbo].[Precos].[Preco],[confeitaria].[dbo].[Precos].[Quantidade] as [Quantidade],[confeitaria].[dbo].[Orcamentos].[Medida],[confeitaria].[dbo].[Orcamentos].[Quantidade] as Fracionada,[confeitaria].[dbo].[Orcamentos].[Preco] AS Fracao FROM [confeitaria].[dbo].[Orcamentos] INNER JOIN [confeitaria].[dbo].Precos ON [PrecoId] = [confeitaria].[dbo].Precos.[Id] WHERE [ProdutoId] = " + id;
                     connection.Open();
 
                     using (SqlCommand command = new(query, connection))
@@ -131,39 +172,20 @@ namespace GifConfeitaria
                         {
                             DataTable dataTable = new();
                             adapter.Fill(dataTable);
+
+                            dg.DataSource = dataTable;
+                            
+
                             decimal fracao = 0;
 
                             foreach (DataRow row in dataTable.Rows)
                             {
-                                int index = dg.Rows.Add();
-
-                                decimal precoProduto = PesquisarValorPrecoPeloId(Convert.ToInt32(row.ItemArray[1]));
-                                int quantidadeProduto = PesquisarQuantidadePrecoPeloId(Convert.ToInt32(row.ItemArray[1]));
-                                fracao += precoProduto / quantidadeProduto * Convert.ToInt32(row.ItemArray[5]);
-
-                                for (int i = 0; i < dataTable.Columns.Count; i++)
-                                {
-                                    if (i == 6)
-                                    {
-                                        dg.Rows[index].Cells[i].Value = precoProduto / quantidadeProduto * Convert.ToInt32(row.ItemArray[5]);
-                                    }
-                                    //else if (i == 2)
-                                    //{
-                                    //    DataGridViewComboBoxCell cb = (DataGridViewComboBoxCell)dg.Rows[index].Cells[i];
-                                    //    cb.DataSource = CarregarListaPrecos();
-                                    //    cb.ValueMember = "Id";
-                                    //    cb.DisplayMember = "Nome";
-                                    //}
-                                    else
-                                    {
-                                        dg.Rows[index].Cells[i].Value = row[i];
-                                    }
-                                }
-
+                                fracao += Convert.ToDecimal(row.ItemArray[7]);
                             }
 
-                            lblTotal.Text = fracao.ToString("0.00");
+                            dg.CurrentCell = dg[2, dataTable.Rows.Count];
 
+                            lblTotal.Text = "R$ " + fracao.ToString("00.00");
                         }
                     }
                 }
@@ -174,7 +196,7 @@ namespace GifConfeitaria
             }
         }
 
-        private void Gravar(int id, int idPreco, int idProduto, string medida, int quantidade, double preco, double total)
+        private void Gravar(int id, int idPreco, int idProduto, string medida, int quantidade, decimal preco)
         {
             try
             {
@@ -182,14 +204,14 @@ namespace GifConfeitaria
 
                 if (id > 0)
                 {
-                    Alterar(id, idPreco, idProduto, medida, quantidade, preco, total);
+                    Alterar(id, idPreco, idProduto, medida, quantidade, preco);
                 }
                 else
                 {
-                    Incluir(idPreco, idProduto, medida, quantidade, preco, total);
+                    Incluir(idPreco, idProduto, medida, quantidade, preco);
                 }
 
-                //BeginInvoke(new MethodInvoker(Listar));
+                BeginInvoke(new MethodInvoker(Listar));
             }
             catch (Exception ex)
             {
@@ -197,11 +219,11 @@ namespace GifConfeitaria
             }
         }
 
-        private void Incluir(int precoId, int produtoId, string medida, int quantidade, double preco, double total)
+        private void Incluir(int precoId, int produtoId, string medida, int quantidade, decimal preco)
         {
             using (SqlConnection connection = new(connectionString))
             {
-                string query = "INSERT INTO [dbo].[Orcamentos] ([PrecoId],[ProdutoId],[Medida],[Quantidade],[Preco],[Total]) VALUES (@PrecoId, @ProdutoId, @Medida, @Quantidade, @Preco, @Total)";
+                string query = "INSERT INTO [dbo].[Orcamentos] ([PrecoId],[ProdutoId],[Medida],[Quantidade],[Preco]) VALUES (@PrecoId, @ProdutoId, @Medida, @Quantidade, @Preco)";
                 connection.Open();
                 SqlCommand cmd = new(query, connection);
                 cmd.Parameters.AddWithValue("@PrecoId", precoId);
@@ -209,18 +231,17 @@ namespace GifConfeitaria
                 cmd.Parameters.AddWithValue("@Medida", medida);
                 cmd.Parameters.AddWithValue("@Quantidade", quantidade);
                 cmd.Parameters.AddWithValue("@Preco", preco);
-                cmd.Parameters.AddWithValue("@Total", total);
 
                 cmd.ExecuteNonQuery();
                 connection.Close();
             }
         }
 
-        private void Alterar(int id, int precoId, int produtoId, string medida, int quantidade, double preco, double total)
+        private void Alterar(int id, int precoId, int produtoId, string medida, int quantidade, decimal preco)
         {
             using (SqlConnection connection = new(connectionString))
             {
-                string query = "UPDATE [dbo].[Orcamentos] SET [PrecoId] = @PrecoId, [ProdutoId] = @ProdutoId, [Medida] = @Medida, [Quantidade] = @Quantidade, [Preco] = @Preco, [Total] = @Total WHERE Id = @Id";
+                string query = "UPDATE [dbo].[Orcamentos] SET [PrecoId] = @PrecoId, [ProdutoId] = @ProdutoId, [Medida] = @Medida, [Quantidade] = @Quantidade, [Preco] = @Preco WHERE Id = @Id";
                 connection.Open();
                 SqlCommand cmd = new(query, connection);
                 cmd.Parameters.AddWithValue("@Id", id);
@@ -229,7 +250,6 @@ namespace GifConfeitaria
                 cmd.Parameters.AddWithValue("@Medida", medida);
                 cmd.Parameters.AddWithValue("@Quantidade", quantidade);
                 cmd.Parameters.AddWithValue("@Preco", preco);
-                cmd.Parameters.AddWithValue("@Total", total);
 
                 cmd.ExecuteNonQuery();
                 connection.Close();
@@ -315,6 +335,7 @@ namespace GifConfeitaria
         private void FrmOrcamentos_Load(object sender, EventArgs e)
         {
             dg.Enabled = false;
+            dg.Visible = false;
             lblProdutoId.Visible = false;
             CarregarComboBoxProdutos();
         }
@@ -391,7 +412,8 @@ namespace GifConfeitaria
                 if (selectedValue > 0)
                 {
                     dg.Enabled = true;
-                   // Listar(selectedValue);
+                    dg.Visible = true;
+                    Listar();
                 }
             }
         }
@@ -402,65 +424,91 @@ namespace GifConfeitaria
             //{
                 if (dg.CurrentRow == null) return;
 
-            //    //Id
-            //    var valorId = dg.CurrentRow.Cells[0].Value;
-            //    int id = 0;
-            //    if (valorId != null)
-            //    {
-            //        id = Convert.ToInt32(valorId);
-            //    }
+            //Id
+            var valorId = dg.CurrentRow.Cells[0].Value;
+            int id = 0;
+            if (valorId != null && valorId.ToString() != "")
+            {
+                id = Convert.ToInt32(valorId);
+            }
 
-            //    //Tabela Precos (Nome)
-            //    var produtoSelecionado = dg.CurrentRow.Cells[2].Value;
-            //    if (produtoSelecionado != null)
-            //    {
-            //        produtoSelecionado.ToString();
-            //    }
-            //    else
-            //    {
-            //        return;
-            //    }
+               //Medida
+            var medida = dg.CurrentRow.Cells[4].Value;
 
-            //    //Medida
-            //    var medida = dg.CurrentRow.Cells[4].Value;
-            //    medida ??= "KG";
-
-            //    //Quantidade
-            //    var valorQuantidade = dg.CurrentRow.Cells[5].Value;
-            //    int quantidade = 0;
-            //    valorQuantidade ??= 0;
-            //    if (valorQuantidade != null)
-            //    {
-            //        quantidade = Convert.ToInt32(valorQuantidade);
-            //    }
+            //Quantidade
+            var valorQuantidade = dg.CurrentRow.Cells[6].Value;
+            int quantidadeFracionada = 0;
+            valorQuantidade ??= 0;
+            if (valorQuantidade != null && valorQuantidade.ToString() != "")
+            {
+                quantidadeFracionada = Convert.ToInt32(valorQuantidade);
+            }
 
             //Fração do preco
             var idPreco = dg.CurrentRow.Cells[1].Value;
+            if (idPreco == null || idPreco.ToString() == "")
+            {
+                return;
+            }
+            decimal preco = 0;
             if (idPreco is int)
             {
-                var quantidade = dg.CurrentRow.Cells[5].Value;
-                if (quantidade != null && Convert.ToInt32(quantidade) is int)
+                var quantidade = dg.CurrentRow.Cells[6].Value;
+                if (quantidade != null && quantidade.ToString() != "")
                 {
                     decimal precoProduto = PesquisarValorPrecoPeloId(Convert.ToInt32(idPreco));
                     int quantidadeProduto = PesquisarQuantidadePrecoPeloId(Convert.ToInt32(idPreco));
                     if (precoProduto > 0)
                     {
-                        decimal preco = precoProduto / quantidadeProduto * Convert.ToInt32(quantidade);
-                        dg.CurrentRow.Cells[6].Value = preco;
+                        preco = precoProduto / quantidadeProduto * Convert.ToInt32(quantidade);
+                        dg.CurrentRow.Cells[7].Value = preco;
                     }
                 }
 
             }
 
-            //    int idproduto = Convert.ToInt32(lblProdutoId.Text);
+            int idproduto = Convert.ToInt32(lblProdutoId.Text);
 
-            //    Gravar(id, 0, idproduto, medida.ToString(), quantidade, preco, 0);
+            Gravar(id, Convert.ToInt32(idPreco), idproduto, medida.ToString(), quantidadeFracionada, preco);
             //}
             //catch (Exception ex)
             //{
             //    MessageBox.Show(ex.Message);
             //}
 
+        }
+
+        private void dg_KeyDown(object sender, KeyEventArgs e)
+        {
+            try
+            {
+                if (e.KeyCode == Keys.Delete)
+                {
+                    if (dg.CurrentRow == null) return;
+
+                    int rowIndex = dg.CurrentRow.Index;
+                    int id = Convert.ToInt32(dg.CurrentRow.Cells[0].Value);
+                    DataTable dt = (DataTable)dg.DataSource;
+                    dt.Rows.RemoveAt(rowIndex);
+                    dg.DataSource = dt;
+
+                    using (SqlConnection connection = new SqlConnection(connectionString))
+                    {
+                        connection.Open();
+                        using (SqlCommand command = new SqlCommand("DELETE FROM ORCAMENTOS WHERE ID = @ID", connection))
+                        {
+                            command.Parameters.AddWithValue("@ID", id);
+                            command.ExecuteNonQuery();
+                        }
+                    }
+
+                    BeginInvoke(new MethodInvoker(Listar));
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
     }
 }

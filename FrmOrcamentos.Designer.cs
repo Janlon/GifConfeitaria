@@ -32,6 +32,8 @@
             splitContainer1 = new SplitContainer();
             dg = new DataGridView();
             cboProdutos = new ComboBox();
+            label2 = new Label();
+            label1 = new Label();
             lblProdutoId = new Label();
             lblTotal = new Label();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
@@ -54,6 +56,8 @@
             // splitContainer1.Panel2
             // 
             splitContainer1.Panel2.Controls.Add(cboProdutos);
+            splitContainer1.Panel2.Controls.Add(label2);
+            splitContainer1.Panel2.Controls.Add(label1);
             splitContainer1.Panel2.Controls.Add(lblProdutoId);
             splitContainer1.Panel2.Controls.Add(lblTotal);
             splitContainer1.Size = new Size(689, 384);
@@ -67,9 +71,11 @@
             dg.Dock = DockStyle.Fill;
             dg.Location = new Point(0, 0);
             dg.Name = "dg";
+            dg.RowHeadersWidth = 51;
             dg.Size = new Size(525, 384);
             dg.TabIndex = 12;
             dg.CellEndEdit += dg_CellEndEdit;
+            dg.KeyDown += dg_KeyDown;
             // 
             // cboProdutos
             // 
@@ -77,18 +83,40 @@
             cboProdutos.DropDownStyle = ComboBoxStyle.DropDownList;
             cboProdutos.FormattingEnabled = true;
             cboProdutos.Items.AddRange(new object[] { "Selecione" });
-            cboProdutos.Location = new Point(0, 0);
+            cboProdutos.Location = new Point(0, 31);
             cboProdutos.Name = "cboProdutos";
-            cboProdutos.Size = new Size(160, 33);
-            cboProdutos.TabIndex = 11;
+            cboProdutos.Size = new Size(160, 39);
+            cboProdutos.TabIndex = 16;
             cboProdutos.SelectedIndexChanged += cboProdutos_SelectedIndexChanged;
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Dock = DockStyle.Top;
+            label2.Location = new Point(0, 0);
+            label2.Name = "label2";
+            label2.Size = new Size(148, 31);
+            label2.TabIndex = 15;
+            label2.Text = "Meu Produto";
+            label2.TextAlign = ContentAlignment.BottomCenter;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Dock = DockStyle.Bottom;
+            label1.Location = new Point(0, 312);
+            label1.Name = "label1";
+            label1.Size = new Size(127, 31);
+            label1.TabIndex = 14;
+            label1.Text = "Custo Total";
+            label1.TextAlign = ContentAlignment.BottomLeft;
             // 
             // lblProdutoId
             // 
             lblProdutoId.AutoSize = true;
-            lblProdutoId.Location = new Point(12, 36);
+            lblProdutoId.Location = new Point(3, 97);
             lblProdutoId.Name = "lblProdutoId";
-            lblProdutoId.Size = new Size(117, 25);
+            lblProdutoId.Size = new Size(142, 31);
             lblProdutoId.TabIndex = 10;
             lblProdutoId.Text = "lblProdutoId";
             // 
@@ -104,12 +132,12 @@
             lblTotal.Name = "lblTotal";
             lblTotal.Size = new Size(160, 41);
             lblTotal.TabIndex = 13;
-            lblTotal.Text = "R$ 0.00";
+            lblTotal.Text = "R$ 00.00";
             lblTotal.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // FrmOrcamentos
             // 
-            AutoScaleDimensions = new SizeF(10F, 25F);
+            AutoScaleDimensions = new SizeF(13F, 31F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(689, 384);
             Controls.Add(splitContainer1);
@@ -134,8 +162,10 @@
 
         private SplitContainer splitContainer1;
         private DataGridView dg;
-        private ComboBox cboProdutos;
         private Label lblProdutoId;
         private Label lblTotal;
+        private Label label1;
+        private Label label2;
+        private ComboBox cboProdutos;
     }
 }

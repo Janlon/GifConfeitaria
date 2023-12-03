@@ -42,11 +42,9 @@ namespace GifConfeitaria
             DataGridViewComboBoxColumn colunaMedida = new();
             colunaMedida.DataPropertyName = "Medida";
             colunaMedida.HeaderText = "Medida";
-            // Adicione os itens ao ComboBox
-            colunaMedida.Items.Add("KG");
+            colunaMedida.Items.Add("HR");
             colunaMedida.Items.Add("GR");
-            colunaMedida.Items.Add("LT");
-            colunaMedida.Items.Add("CX");
+            colunaMedida.Items.Add("ML");
             colunaMedida.Items.Add("UN");
             dg.Columns.Add(colunaMedida);
             dg.Columns[2].Width = 100;
@@ -118,10 +116,14 @@ namespace GifConfeitaria
                     Incluir(nome, medida, quantidade, preco);
                 }
 
-               // BeginInvoke(new MethodInvoker(Listar));
+                BeginInvoke(new MethodInvoker(Listar));
             }
             catch (Exception ex)
             {
+                if(ex.Message.Contains("Violação da restrição UNIQUE KEY"))
+                {
+                    return;
+                }
                 MessageBox.Show(ex.Message);
             }
         }
@@ -182,10 +184,6 @@ namespace GifConfeitaria
 
             //medida
             var medida = dg.CurrentRow.Cells[2].Value.ToString();
-            if (medida == string.Empty)
-            {
-                medida = "KG";
-            }
 
             //Quantidade
             var valorQuantidade = dg.CurrentRow.Cells[3].Value;
@@ -230,6 +228,8 @@ namespace GifConfeitaria
                             command.ExecuteNonQuery();
                         }
                     }
+
+                    BeginInvoke(new MethodInvoker(Listar));
                 }
             }
             catch (Exception ex)

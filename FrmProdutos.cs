@@ -181,6 +181,8 @@ namespace GifConfeitaria
                             command.ExecuteNonQuery();
                         }
                     }
+
+                    BeginInvoke(new MethodInvoker(Listar));
                 }
             }
             catch (Exception ex)
